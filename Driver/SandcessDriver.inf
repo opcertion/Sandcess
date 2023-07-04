@@ -1,0 +1,78 @@
+;
+; SandcessDriver.inf
+;
+
+[Version]
+Signature		= "$WINDOWS NT$"
+Class			= Virtualization
+ClassGuid		= {f75a86c0-10d8-4c3a-b233-ed60e4cdfaac}
+Provider		= %ManufacturerName%
+; DriverVer		=
+CatalogFile		= SandcessDriver.cat
+PnpLockdown		= 1
+
+[DestinationDirs]
+DefaultDestDir				= 12
+Sandcess.DriverFiles		= 12
+
+
+;
+; Default Install Section
+;
+
+[DefaultInstall]
+CopyFiles					= Sandcess.DriverFiles
+
+[DefaultInstall.Services]
+AddService					= %ServiceName%,,Sandcess.Service
+
+[DefaultUninstall]
+DelFiles					= Sandcess.DriverFiles
+
+[DefaultUninstall.Services]
+DelService					= %ServiceName%,0x200
+
+
+;
+; Service Section
+;
+
+[Sandcess.Service]
+DisplayName			= %ServiceName%
+ServiceBinary		= %12%\%DriverName%.sys
+ErrorControl		= 1
+ServiceType			= 2
+StartType			= 3
+LoadOrderGroup		= "FSFilter Virtualization"
+AddReg				= Sandcess.AddRegistry
+
+[Sandcess.AddRegistry]
+HKR,"Instances","DefaultInstance",0x00000000,%DefaultInstance%
+HKR,"Instances\"%Instance.Name%,"Altitude",0x00000000,%Instance.Altitude%
+HKR,"Instances\"%Instance.Name%,"Flags",0x00010001,%Instance.Flags%
+
+[Sandcess.DriverFiles]
+%DriverName%.sys
+
+[SourceDisksNames]
+1					= %DiskName%,,,""
+
+[SourceDisksFiles]
+SandcessDriver.sys	= 1,,
+
+
+;
+; String Section
+;
+
+[Strings]
+ManufacturerName	= "Sandcess"
+ProviderString		= "Sandcess"
+ServiceName			= "Sandcess"
+DriverName			= "SandcessDriver"
+DiskName			= "Sandcess Driver Source Disk"
+
+DefaultInstance		= "Sandcess"
+Instance.Name		= "Sandcess"
+Instance.Altitude	= "139800"
+Instance.Flags		= 0x0
