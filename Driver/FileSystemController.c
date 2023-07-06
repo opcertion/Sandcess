@@ -10,7 +10,6 @@ FileSystemControllerInitialize(
 }
 
 
-
 #pragma warning( push )
 #pragma warning( disable:6101 )
 FLT_PREOP_CALLBACK_STATUS

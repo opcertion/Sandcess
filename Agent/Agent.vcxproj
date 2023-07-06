@@ -88,9 +88,11 @@
   <ItemGroup>
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="CommunicationController.cpp" />
+    <ClCompile Include="EnvController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommunicationController.h" />
+    <ClInclude Include="EnvController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

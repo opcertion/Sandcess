@@ -31,9 +31,9 @@ DriverEntry(
 		FALSE,
 		&g_device_object
 	);
-	CHECK_ERROR(IoCreateDevice, status, CLEANUP_DRIVER_ENTRY);
+	CHECK_ERROR(IoCreateDevice, status, CLEANUP);
 	status = IoCreateSymbolicLink(&g_device_name, &g_dos_device_name);
-	CHECK_ERROR(IoCreateSymbolicLink, status, CLEANUP_DRIVER_ENTRY);
+	CHECK_ERROR(IoCreateSymbolicLink, status, CLEANUP);
 
 	
 	// ==================== [ Sync ] ====================
@@ -42,27 +42,27 @@ DriverEntry(
 
 	// ==================== [ Minifilter Controller ] ====================
 	status = MinifltControllerInitialize(driver_object);
-	CHECK_ERROR(MinifltControllerInitialize, status, CLEANUP_DRIVER_ENTRY);
+	CHECK_ERROR(MinifltControllerInitialize, status, CLEANUP);
 
 
 	// ==================== [ File System Controller ] ====================
 	status = FileSystemControllerInitialize(g_flt_handle);
-	CHECK_ERROR(FileSystemControllerInitialize, status, CLEANUP_DRIVER_ENTRY);
+	CHECK_ERROR(FileSystemControllerInitialize, status, CLEANUP);
 
 
 	// ==================== [ Communication Port ] ====================
 	status = CommunicationControllerInitialize(g_flt_handle);
-	CHECK_ERROR(CommunicationControllerInitialize, status, CLEANUP_DRIVER_ENTRY);
+	CHECK_ERROR(CommunicationControllerInitialize, status, CLEANUP);
 
 
 	// ==================== [ Process Controller ] ====================
 	status = ProcessControllerInitialize();
-	CHECK_ERROR(ProcessControllerInitialize, status, CLEANUP_DRIVER_ENTRY);
+	CHECK_ERROR(ProcessControllerInitialize, status, CLEANUP);
 
 
 	return STATUS_SUCCESS;
 
-CLEANUP_DRIVER_ENTRY:
+CLEANUP:
 	Cleanup();
 	return status; // NT_ERROR
 }
