@@ -60,9 +60,11 @@ MinifltPortMessageRoutine(
 {
 	UNREFERENCED_PARAMETER(port_cookie);
 
+
+	PUSER_TO_FLT req; RtlZeroMemory(&req, sizeof(req));
 	if (input_buffer && input_buffer_size == sizeof(USER_TO_FLT))
 	{
-		// PUSER_TO_FLT req = (PUSER_TO_FLT)input_buffer;
+		req = (PUSER_TO_FLT)input_buffer;
 	}
 
 	if (output_buffer && output_buffer_size == sizeof(USER_TO_FLT_REPLY))
@@ -82,7 +84,7 @@ CommunicationControllerInitialize(
 )
 {
 	NTSTATUS status = STATUS_SUCCESS;
-	UNICODE_STRING port_name; RtlZeroMemory(&port_name, sizeof(port_name));
+	UNICODE_STRING port_name = RTL_CONSTANT_STRING(MINIFLT_PORT_NAME);
 	PSECURITY_DESCRIPTOR security_descriptor; RtlZeroMemory(&security_descriptor, sizeof(security_descriptor));
 	OBJECT_ATTRIBUTES object_attributes; RtlZeroMemory(&object_attributes, sizeof(object_attributes));
 
@@ -92,10 +94,13 @@ CommunicationControllerInitialize(
 	);
 	if (!NT_SUCCESS(status))
 		return status;
-
-	RtlInitUnicodeString(&port_name, MINIFLT_PORT_NAME);
+	
 	InitializeObjectAttributes(
-		&object_attributes, &port_name, OBJ_KERNEL_HANDLE | OBJ_CASE_INSENSITIVE, NULL, security_descriptor
+		&object_attributes,
+		&port_name,
+		OBJ_KERNEL_HANDLE | OBJ_CASE_INSENSITIVE,
+		NULL,
+		security_descriptor
 	);
 
 	status = FltCreateCommunicationPort(

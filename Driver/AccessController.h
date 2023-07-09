@@ -26,4 +26,11 @@ enum ACCESS_TYPE
 };
 
 
+NTSTATUS
+AccessControllerInitialize();
+
+VOID
+AccessControllerRelease();
+
+
 #endif // !__ACCESS_CONTROLLER_H__

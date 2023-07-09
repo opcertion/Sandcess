@@ -33,9 +33,18 @@
             iconButtonMaximize = new FontAwesome.Sharp.IconButton();
             iconButtonClose = new FontAwesome.Sharp.IconButton();
             panelContent = new Panel();
-            tabControlContent = new TabControl();
+            tabControlMainContent = new TabControl();
             tabPageDashboard = new TabPage();
             tabPageFileSystem = new TabPage();
+            panelListViewFileSystemFile = new Panel();
+            listViewFileSystemFile = new ListView();
+            panelFileSystemPermissionSetting = new Panel();
+            btnFileSystemPermissionApply = new FontAwesome.Sharp.IconButton();
+            tabControlFileSystemPermission = new TabControl();
+            tabPageFileSystemPermissionFile = new TabPage();
+            tabPageFileSystemPermissionProcess = new TabPage();
+            tabPageFileSystemPermissionNetwork = new TabPage();
+            tabPageFileSystemPermissionContainer = new TabPage();
             tabPageProcess = new TabPage();
             tabPageContainer = new TabPage();
             tabPageEventLog = new TabPage();
@@ -44,7 +53,11 @@
             panelSideMenuHeader.SuspendLayout();
             panelTitleBar.SuspendLayout();
             panelContent.SuspendLayout();
-            tabControlContent.SuspendLayout();
+            tabControlMainContent.SuspendLayout();
+            tabPageFileSystem.SuspendLayout();
+            panelListViewFileSystemFile.SuspendLayout();
+            panelFileSystemPermissionSetting.SuspendLayout();
+            tabControlFileSystemPermission.SuspendLayout();
             SuspendLayout();
             // 
             // panelSideBar
@@ -318,7 +331,7 @@
             // panelContent
             // 
             panelContent.BackColor = Color.FromArgb(26, 26, 26);
-            panelContent.Controls.Add(tabControlContent);
+            panelContent.Controls.Add(tabControlMainContent);
             panelContent.Dock = DockStyle.Fill;
             panelContent.Location = new Point(224, 85);
             panelContent.Margin = new Padding(4);
@@ -326,25 +339,25 @@
             panelContent.Size = new Size(990, 570);
             panelContent.TabIndex = 2;
             // 
-            // tabControlContent
+            // tabControlMainContent
             // 
-            tabControlContent.Appearance = TabAppearance.FlatButtons;
-            tabControlContent.Controls.Add(tabPageDashboard);
-            tabControlContent.Controls.Add(tabPageFileSystem);
-            tabControlContent.Controls.Add(tabPageProcess);
-            tabControlContent.Controls.Add(tabPageContainer);
-            tabControlContent.Controls.Add(tabPageEventLog);
-            tabControlContent.Dock = DockStyle.Fill;
-            tabControlContent.Font = new Font("Microsoft YaHei", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            tabControlContent.ImeMode = ImeMode.NoControl;
-            tabControlContent.ItemSize = new Size(60, 20);
-            tabControlContent.Location = new Point(0, 0);
-            tabControlContent.Margin = new Padding(4);
-            tabControlContent.Name = "tabControlContent";
-            tabControlContent.SelectedIndex = 0;
-            tabControlContent.Size = new Size(990, 570);
-            tabControlContent.SizeMode = TabSizeMode.Fixed;
-            tabControlContent.TabIndex = 0;
+            tabControlMainContent.Appearance = TabAppearance.FlatButtons;
+            tabControlMainContent.Controls.Add(tabPageDashboard);
+            tabControlMainContent.Controls.Add(tabPageFileSystem);
+            tabControlMainContent.Controls.Add(tabPageProcess);
+            tabControlMainContent.Controls.Add(tabPageContainer);
+            tabControlMainContent.Controls.Add(tabPageEventLog);
+            tabControlMainContent.Dock = DockStyle.Fill;
+            tabControlMainContent.Font = new Font("Microsoft YaHei", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            tabControlMainContent.ImeMode = ImeMode.NoControl;
+            tabControlMainContent.ItemSize = new Size(60, 20);
+            tabControlMainContent.Location = new Point(0, 0);
+            tabControlMainContent.Margin = new Padding(4);
+            tabControlMainContent.Name = "tabControlMainContent";
+            tabControlMainContent.SelectedIndex = 0;
+            tabControlMainContent.Size = new Size(990, 570);
+            tabControlMainContent.SizeMode = TabSizeMode.Fixed;
+            tabControlMainContent.TabIndex = 0;
             // 
             // tabPageDashboard
             // 
@@ -360,6 +373,8 @@
             // 
             // tabPageFileSystem
             // 
+            tabPageFileSystem.Controls.Add(panelListViewFileSystemFile);
+            tabPageFileSystem.Controls.Add(panelFileSystemPermissionSetting);
             tabPageFileSystem.Location = new Point(4, 24);
             tabPageFileSystem.Margin = new Padding(4);
             tabPageFileSystem.Name = "tabPageFileSystem";
@@ -368,6 +383,101 @@
             tabPageFileSystem.TabIndex = 1;
             tabPageFileSystem.Text = "FileSystem";
             tabPageFileSystem.UseVisualStyleBackColor = true;
+            // 
+            // panelListViewFileSystemFile
+            // 
+            panelListViewFileSystemFile.Controls.Add(listViewFileSystemFile);
+            panelListViewFileSystemFile.Dock = DockStyle.Fill;
+            panelListViewFileSystemFile.Location = new Point(4, 4);
+            panelListViewFileSystemFile.Name = "panelListViewFileSystemFile";
+            panelListViewFileSystemFile.Size = new Size(702, 534);
+            panelListViewFileSystemFile.TabIndex = 1;
+            // 
+            // listViewFileSystemFile
+            // 
+            listViewFileSystemFile.Dock = DockStyle.Fill;
+            listViewFileSystemFile.Location = new Point(0, 0);
+            listViewFileSystemFile.Name = "listViewFileSystemFile";
+            listViewFileSystemFile.Size = new Size(702, 534);
+            listViewFileSystemFile.TabIndex = 0;
+            listViewFileSystemFile.UseCompatibleStateImageBehavior = false;
+            // 
+            // panelFileSystemPermissionSetting
+            // 
+            panelFileSystemPermissionSetting.Controls.Add(btnFileSystemPermissionApply);
+            panelFileSystemPermissionSetting.Controls.Add(tabControlFileSystemPermission);
+            panelFileSystemPermissionSetting.Dock = DockStyle.Right;
+            panelFileSystemPermissionSetting.Location = new Point(706, 4);
+            panelFileSystemPermissionSetting.Name = "panelFileSystemPermissionSetting";
+            panelFileSystemPermissionSetting.Size = new Size(272, 534);
+            panelFileSystemPermissionSetting.TabIndex = 0;
+            // 
+            // btnFileSystemPermissionApply
+            // 
+            btnFileSystemPermissionApply.Dock = DockStyle.Bottom;
+            btnFileSystemPermissionApply.IconChar = FontAwesome.Sharp.IconChar.None;
+            btnFileSystemPermissionApply.IconColor = Color.Black;
+            btnFileSystemPermissionApply.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnFileSystemPermissionApply.Location = new Point(0, 505);
+            btnFileSystemPermissionApply.Name = "btnFileSystemPermissionApply";
+            btnFileSystemPermissionApply.Size = new Size(272, 29);
+            btnFileSystemPermissionApply.TabIndex = 1;
+            btnFileSystemPermissionApply.Text = "Permission Apply";
+            btnFileSystemPermissionApply.UseVisualStyleBackColor = true;
+            // 
+            // tabControlFileSystemPermission
+            // 
+            tabControlFileSystemPermission.Controls.Add(tabPageFileSystemPermissionFile);
+            tabControlFileSystemPermission.Controls.Add(tabPageFileSystemPermissionProcess);
+            tabControlFileSystemPermission.Controls.Add(tabPageFileSystemPermissionNetwork);
+            tabControlFileSystemPermission.Controls.Add(tabPageFileSystemPermissionContainer);
+            tabControlFileSystemPermission.Dock = DockStyle.Fill;
+            tabControlFileSystemPermission.Location = new Point(0, 0);
+            tabControlFileSystemPermission.Name = "tabControlFileSystemPermission";
+            tabControlFileSystemPermission.SelectedIndex = 0;
+            tabControlFileSystemPermission.Size = new Size(272, 534);
+            tabControlFileSystemPermission.TabIndex = 0;
+            // 
+            // tabPageFileSystemPermissionFile
+            // 
+            tabPageFileSystemPermissionFile.Font = new Font("Microsoft YaHei", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            tabPageFileSystemPermissionFile.Location = new Point(4, 29);
+            tabPageFileSystemPermissionFile.Name = "tabPageFileSystemPermissionFile";
+            tabPageFileSystemPermissionFile.Padding = new Padding(3);
+            tabPageFileSystemPermissionFile.Size = new Size(264, 501);
+            tabPageFileSystemPermissionFile.TabIndex = 0;
+            tabPageFileSystemPermissionFile.Text = "File";
+            tabPageFileSystemPermissionFile.UseVisualStyleBackColor = true;
+            // 
+            // tabPageFileSystemPermissionProcess
+            // 
+            tabPageFileSystemPermissionProcess.Location = new Point(4, 29);
+            tabPageFileSystemPermissionProcess.Name = "tabPageFileSystemPermissionProcess";
+            tabPageFileSystemPermissionProcess.Padding = new Padding(3);
+            tabPageFileSystemPermissionProcess.Size = new Size(264, 501);
+            tabPageFileSystemPermissionProcess.TabIndex = 1;
+            tabPageFileSystemPermissionProcess.Text = "Process";
+            tabPageFileSystemPermissionProcess.UseVisualStyleBackColor = true;
+            // 
+            // tabPageFileSystemPermissionNetwork
+            // 
+            tabPageFileSystemPermissionNetwork.Location = new Point(4, 29);
+            tabPageFileSystemPermissionNetwork.Name = "tabPageFileSystemPermissionNetwork";
+            tabPageFileSystemPermissionNetwork.Padding = new Padding(3);
+            tabPageFileSystemPermissionNetwork.Size = new Size(264, 501);
+            tabPageFileSystemPermissionNetwork.TabIndex = 2;
+            tabPageFileSystemPermissionNetwork.Text = "Net";
+            tabPageFileSystemPermissionNetwork.UseVisualStyleBackColor = true;
+            // 
+            // tabPageFileSystemPermissionContainer
+            // 
+            tabPageFileSystemPermissionContainer.Location = new Point(4, 29);
+            tabPageFileSystemPermissionContainer.Name = "tabPageFileSystemPermissionContainer";
+            tabPageFileSystemPermissionContainer.Padding = new Padding(3);
+            tabPageFileSystemPermissionContainer.Size = new Size(264, 501);
+            tabPageFileSystemPermissionContainer.TabIndex = 3;
+            tabPageFileSystemPermissionContainer.Text = "Container";
+            tabPageFileSystemPermissionContainer.UseVisualStyleBackColor = true;
             // 
             // tabPageProcess
             // 
@@ -422,7 +532,11 @@
             panelTitleBar.ResumeLayout(false);
             panelTitleBar.PerformLayout();
             panelContent.ResumeLayout(false);
-            tabControlContent.ResumeLayout(false);
+            tabControlMainContent.ResumeLayout(false);
+            tabPageFileSystem.ResumeLayout(false);
+            panelListViewFileSystemFile.ResumeLayout(false);
+            panelFileSystemPermissionSetting.ResumeLayout(false);
+            tabControlFileSystemPermission.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -443,12 +557,21 @@
         private Label labelTitle;
         private Label labelHorizontalLine1;
         private FontAwesome.Sharp.IconButton btnMenuEventLog;
-        private TabControl tabControlContent;
+        private TabControl tabControlMainContent;
         private TabPage tabPageDashboard;
         private TabPage tabPageFileSystem;
         private TabPage tabPageProcess;
         private TabPage tabPageContainer;
         private TabPage tabPageEventLog;
         private Panel panelSideMenu;
+        private Panel panelListViewFileSystemFile;
+        private ListView listViewFileSystemFile;
+        private Panel panelFileSystemPermissionSetting;
+        private TabControl tabControlFileSystemPermission;
+        private TabPage tabPageFileSystemPermissionFile;
+        private TabPage tabPageFileSystemPermissionProcess;
+        private TabPage tabPageFileSystemPermissionNetwork;
+        private TabPage tabPageFileSystemPermissionContainer;
+        private FontAwesome.Sharp.IconButton btnFileSystemPermissionApply;
     }
 }

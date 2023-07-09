@@ -40,6 +40,11 @@ DriverEntry(
 	SyncMutexInitialize();
 
 
+	// ==================== [ Access Controller ] ====================
+	status = AccessControllerInitialize();
+	CHECK_ERROR(AcesssControllerInitialize, status, CLEANUP);
+
+
 	// ==================== [ Minifilter Controller ] ====================
 	status = MinifltControllerInitialize(driver_object);
 	CHECK_ERROR(MinifltControllerInitialize, status, CLEANUP);
@@ -84,6 +89,7 @@ DriverUnload(
 VOID
 Cleanup()
 {
+	AccessControllerRelease();
 	ProcessControllerRelease();
 	ProcessHolderRelease();
 	SyncFastMutexUnlock();

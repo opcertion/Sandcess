@@ -76,7 +76,7 @@ namespace Sandcess
 
         private void ChangeTabControlContent(ContentIndex contentIndex)
         {
-            tabControlContent.SelectedIndex = (int)contentIndex;
+            tabControlMainContent.SelectedIndex = (int)contentIndex;
 
             foreach (Control control in panelSideMenu.Controls)
             {

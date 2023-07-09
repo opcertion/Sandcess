@@ -29,7 +29,7 @@ int wmain(const int argc, const wchar_t* argv[])
 		h_result = comm_controller.Connect();
 		if (IS_ERROR(h_result)) return -1;
 
-		miniflt::USER_TO_FLT req = { L"" };
+		miniflt::USER_TO_FLT req = { *argv[2] };
 		miniflt::USER_TO_FLT_REPLY reply;
 		reply = comm_controller.Send(&req);
 
