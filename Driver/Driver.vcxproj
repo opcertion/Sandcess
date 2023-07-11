@@ -18,7 +18,7 @@
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">x64</Platform>
     <RootNamespace>Driver</RootNamespace>
-    <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -99,21 +99,25 @@
     <ClCompile Include="AccessController.c" />
     <ClCompile Include="CommunicationController.c" />
     <ClCompile Include="FileSystemController.c" />
+    <ClCompile Include="FileUtils.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="MinifltController.c" />
     <ClCompile Include="pch.c" />
     <ClCompile Include="ProcessController.c" />
     <ClCompile Include="ProcessHolder.c" />
+    <ClCompile Include="StringUtils.c" />
     <ClCompile Include="sync.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AccessController.h" />
     <ClInclude Include="CommunicationController.h" />
     <ClInclude Include="FileSystemController.h" />
+    <ClInclude Include="FileUtils.h" />
     <ClInclude Include="MinifltController.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ProcessController.h" />
     <ClInclude Include="ProcessHolder.h" />
+    <ClInclude Include="StringUtils.h" />
     <ClInclude Include="sync.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

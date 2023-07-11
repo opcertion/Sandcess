@@ -3,6 +3,7 @@
 
 
 #include <fltKernel.h>
+#include "FileUtils.h"
 
 
 enum ACCESS_TYPE

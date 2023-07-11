@@ -36,27 +36,21 @@ namespace miniflt
 	}
 
 
-	USER_TO_FLT_REPLY CommunicationController::Send(const USER_TO_FLT *req)
+	FLT_TO_USER CommunicationController::Send(_In_ USER_TO_FLT *req)
 	{
-		USER_TO_FLT_REPLY reply; ZeroMemory(&reply, sizeof(reply));
+		FLT_TO_USER resp; ZeroMemory(&resp, sizeof(resp));
 		DWORD returned_bytes;
 
 		HRESULT h_result = FilterSendMessage(
 			port_handle,
-			&req,
-			sizeof(req),
-			&reply,
-			sizeof(reply),
+			req,
+			sizeof(*req),
+			&resp,
+			MSG_BUFFER_SIZE,
 			&returned_bytes
 		);
-
 		if (IS_ERROR(h_result))
-		{
-			reply.msg[0] = L'\0';
-			return reply;
-		}
-		if (returned_bytes < MSG_BUFFER_SIZE)
-			reply.msg[returned_bytes / sizeof(WCHAR)] = L'\0';
-		return reply;
+			ZeroMemory(&resp, sizeof(resp));
+		return resp;
 	}
 };

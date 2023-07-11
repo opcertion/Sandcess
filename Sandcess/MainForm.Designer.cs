@@ -46,6 +46,11 @@
             tabPageFileSystemPermissionNetwork = new TabPage();
             tabPageFileSystemPermissionContainer = new TabPage();
             tabPageProcess = new TabPage();
+            listViewProcessProcess = new ListView();
+            columnHeaderProcessId = new ColumnHeader();
+            columnHeaderProcessName = new ColumnHeader();
+            columnHeaderProcessPath = new ColumnHeader();
+            columnHeaderProcessContainer = new ColumnHeader();
             tabPageContainer = new TabPage();
             tabPageEventLog = new TabPage();
             panelSideBar.SuspendLayout();
@@ -58,6 +63,7 @@
             panelListViewFileSystemFile.SuspendLayout();
             panelFileSystemPermissionSetting.SuspendLayout();
             tabControlFileSystemPermission.SuspendLayout();
+            tabPageProcess.SuspendLayout();
             SuspendLayout();
             // 
             // panelSideBar
@@ -401,6 +407,7 @@
             listViewFileSystemFile.Size = new Size(702, 534);
             listViewFileSystemFile.TabIndex = 0;
             listViewFileSystemFile.UseCompatibleStateImageBehavior = false;
+            listViewFileSystemFile.View = View.Details;
             // 
             // panelFileSystemPermissionSetting
             // 
@@ -481,6 +488,7 @@
             // 
             // tabPageProcess
             // 
+            tabPageProcess.Controls.Add(listViewProcessProcess);
             tabPageProcess.Location = new Point(4, 24);
             tabPageProcess.Margin = new Padding(4);
             tabPageProcess.Name = "tabPageProcess";
@@ -489,6 +497,37 @@
             tabPageProcess.TabIndex = 2;
             tabPageProcess.Text = "Process";
             tabPageProcess.UseVisualStyleBackColor = true;
+            // 
+            // listViewProcessProcess
+            // 
+            listViewProcessProcess.Columns.AddRange(new ColumnHeader[] { columnHeaderProcessId, columnHeaderProcessName, columnHeaderProcessPath, columnHeaderProcessContainer });
+            listViewProcessProcess.Dock = DockStyle.Fill;
+            listViewProcessProcess.Location = new Point(4, 4);
+            listViewProcessProcess.Name = "listViewProcessProcess";
+            listViewProcessProcess.Size = new Size(974, 534);
+            listViewProcessProcess.TabIndex = 0;
+            listViewProcessProcess.UseCompatibleStateImageBehavior = false;
+            listViewProcessProcess.View = View.Details;
+            // 
+            // columnHeaderProcessId
+            // 
+            columnHeaderProcessId.Text = "Process ID";
+            columnHeaderProcessId.Width = 90;
+            // 
+            // columnHeaderProcessName
+            // 
+            columnHeaderProcessName.Text = "Process Name";
+            columnHeaderProcessName.Width = 350;
+            // 
+            // columnHeaderProcessPath
+            // 
+            columnHeaderProcessPath.Text = "Process Path";
+            columnHeaderProcessPath.Width = 350;
+            // 
+            // columnHeaderProcessContainer
+            // 
+            columnHeaderProcessContainer.Text = "Container";
+            columnHeaderProcessContainer.Width = 200;
             // 
             // tabPageContainer
             // 
@@ -537,6 +576,7 @@
             panelListViewFileSystemFile.ResumeLayout(false);
             panelFileSystemPermissionSetting.ResumeLayout(false);
             tabControlFileSystemPermission.ResumeLayout(false);
+            tabPageProcess.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -573,5 +613,10 @@
         private TabPage tabPageFileSystemPermissionNetwork;
         private TabPage tabPageFileSystemPermissionContainer;
         private FontAwesome.Sharp.IconButton btnFileSystemPermissionApply;
+        private ListView listViewProcessProcess;
+        private ColumnHeader columnHeaderProcessId;
+        private ColumnHeader columnHeaderProcessName;
+        private ColumnHeader columnHeaderProcessPath;
+        private ColumnHeader columnHeaderProcessContainer;
     }
 }

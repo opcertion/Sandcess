@@ -9,17 +9,17 @@
 namespace miniflt
 {
 #define PORT_NAME			L"\\SandcessMinifltPort"
-#define MSG_BUFFER_SIZE		2048
+#define MSG_BUFFER_SIZE		4096
 
 	typedef struct _USER_TO_FLT
 	{
-		WCHAR msg[MSG_BUFFER_SIZE / sizeof(WCHAR)];
+		WCHAR buffer[MSG_BUFFER_SIZE / sizeof(WCHAR)];
 	} USER_TO_FLT, *PUSER_TO_FLT;
 
-	typedef struct _USER_TO_FLT_REPLY
+	typedef struct _FLT_TO_USER
 	{
-		WCHAR msg[MSG_BUFFER_SIZE / sizeof(WCHAR)];
-	} USER_TO_FLT_REPLY, *PUSER_TO_FLT_REPLY;
+		WCHAR buffer[MSG_BUFFER_SIZE / sizeof(WCHAR)];
+	} FLT_TO_USER, *PFLT_TO_USER;
 
 	class CommunicationController
 	{
@@ -32,7 +32,7 @@ namespace miniflt
 		
 		HRESULT Connect();
 		VOID Close();
-		USER_TO_FLT_REPLY Send(const USER_TO_FLT *req);
+		FLT_TO_USER Send(_In_ USER_TO_FLT *req);
 	};
 };
 

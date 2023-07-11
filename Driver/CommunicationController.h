@@ -3,10 +3,12 @@
 
 
 #include <fltKernel.h>
+#include "ProcessHolder.h"
+#include "StringUtils.h"
 
 
 #define MINIFLT_PORT_NAME			L"\\SandcessMinifltPort"
-#define MINIFLT_MSG_BUFFER_SIZE		2048
+#define MINIFLT_MSG_BUFFER_SIZE		4096
 
 
 NTSTATUS

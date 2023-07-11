@@ -4,7 +4,10 @@
 /* Extern */ PROCESS_HOLDER_NODE* g_process_holder = NULL;
 
 
-BOOLEAN ProcessHolderAddProcess(const HANDLE process_id)
+BOOLEAN
+ProcessHolderAddProcess(
+	_In_ const HANDLE process_id
+)
 {
 	BOOLEAN ret = TRUE;
 	SyncFastMutexLock();
@@ -48,7 +51,10 @@ CLEANUP:
 }
 
 
-VOID ProcessHolderDeleteProcess(const HANDLE process_id)
+VOID
+ProcessHolderDeleteProcess(
+	_In_ const HANDLE process_id
+)
 {
 	SyncFastMutexLock();
 
@@ -78,7 +84,7 @@ VOID ProcessHolderDeleteProcess(const HANDLE process_id)
 	} while (
 		trace_node->process_id != NULL &&
 		PtrToUint(trace_node->process_id) != target_pid
-		);
+	);
 
 	ExFreePool(prev_node->next_node);
 	prev_node->next_node = trace_node->next_node;
@@ -89,20 +95,21 @@ CLEANUP:
 }
 
 
-UINT32 ProcessHolderGetProcessCount()
+UINT32
+ProcessHolderGetProcessCount()
 {
 	SyncFastMutexLock();
 
 	UINT32 ret = 0;
 	if (g_process_holder == NULL)
 		goto CLEANUP;
-	PROCESS_HOLDER_NODE trace_node = *g_process_holder;
+	PROCESS_HOLDER_NODE *trace_node = g_process_holder;
 
-	for (; trace_node.process_id != NULL; ret++)
+	for (; trace_node->process_id != NULL; ret++)
 	{
-		if (trace_node.next_node == NULL)
+		if (trace_node->next_node == NULL)
 			break;
-		trace_node = *trace_node.next_node;
+		trace_node = trace_node->next_node;
 	}
 
 CLEANUP:
@@ -111,7 +118,8 @@ CLEANUP:
 }
 
 
-VOID ProcessHolderRelease()
+VOID
+ProcessHolderRelease()
 {
 	SyncFastMutexLock();
 

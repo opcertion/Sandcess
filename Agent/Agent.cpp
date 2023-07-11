@@ -21,7 +21,7 @@ int wmain(const int argc, const wchar_t* argv[])
 	}
 
 
-	/* send data to driver */
+	/* send data */
 	if (argc == 3 && lstrcmpiW(argv[1], L"--send") == 0)
 	{
 		miniflt::CommunicationController comm_controller;
@@ -29,11 +29,13 @@ int wmain(const int argc, const wchar_t* argv[])
 		h_result = comm_controller.Connect();
 		if (IS_ERROR(h_result)) return -1;
 
-		miniflt::USER_TO_FLT req = { *argv[2] };
-		miniflt::USER_TO_FLT_REPLY reply;
-		reply = comm_controller.Send(&req);
+		miniflt::USER_TO_FLT req; ZeroMemory(&req, sizeof(req));
+		miniflt::FLT_TO_USER resp; ZeroMemory(&resp, sizeof(resp));
 
-		std::wcout << reply.msg << L"\n";
+		wcsncpy_s(req.buffer, argv[2], MSG_BUFFER_SIZE);
+		resp = comm_controller.Send(&req);
+
+		wprintf(L"%s", resp.buffer);
 		return 0;
 	}
 	return 0;

@@ -3,16 +3,16 @@
 
 typedef struct _USER_TO_FLT
 {
-	WCHAR msg[MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR)];
+	WCHAR buffer[MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR)];
 } USER_TO_FLT, *PUSER_TO_FLT;
 
-typedef struct _USER_TO_FLT_REPLY
+typedef struct _FLT_TO_UESR
 {
-	WCHAR msg[MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR)];
-} USER_TO_FLT_REPLY, *PUSER_TO_FLT_REPLY;
+	WCHAR buffer[MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR)];
+} FLT_TO_USER, *PFLT_TO_USER;
 
 
-PFLT_PORT g_flt_port;
+PFLT_PORT g_flt_port = NULL;
 
 
 #pragma warning( push )
@@ -60,19 +60,21 @@ MinifltPortMessageRoutine(
 {
 	UNREFERENCED_PARAMETER(port_cookie);
 
-
 	PUSER_TO_FLT req; RtlZeroMemory(&req, sizeof(req));
+	PFLT_TO_USER resp; RtlZeroMemory(&resp, sizeof(resp));
+
 	if (input_buffer && input_buffer_size == sizeof(USER_TO_FLT))
 	{
 		req = (PUSER_TO_FLT)input_buffer;
 	}
 
-	if (output_buffer && output_buffer_size == sizeof(USER_TO_FLT_REPLY))
+	if (output_buffer && output_buffer_size == sizeof(FLT_TO_USER))
 	{
-		PUSER_TO_FLT_REPLY reply = (PUSER_TO_FLT_REPLY)output_buffer;
-		wcscpy(reply->msg, L"");
-		*return_output_buffer_size = (ULONG)(wcslen(reply->msg) * sizeof(WCHAR));
+		resp = (PFLT_TO_USER)output_buffer;
+		wcscpy(resp->buffer, L"");
+		*return_output_buffer_size = sizeof(resp->buffer);
 	}
+
 	return STATUS_SUCCESS;
 }
 #pragma warning( pop )
@@ -113,5 +115,6 @@ CommunicationControllerInitialize(
 		MinifltPortMessageRoutine,
 		1
 	);
+
 	return status;
 }
