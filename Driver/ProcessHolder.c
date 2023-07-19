@@ -1,12 +1,12 @@
 #include "ProcessHolder.h"
 
 
-/* Extern */ PROCESS_HOLDER_NODE* g_process_holder = NULL;
+/* Extern */ PPROCESS_HOLDER g_process_holder = NULL;
 
 
 BOOLEAN
 ProcessHolderAddProcess(
-	_In_ const HANDLE process_id
+	_In_ HANDLE process_id
 )
 {
 	BOOLEAN ret = TRUE;
@@ -14,10 +14,10 @@ ProcessHolderAddProcess(
 
 	if (g_process_holder == NULL)
 	{
-		g_process_holder = (PROCESS_HOLDER_NODE*)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(PROCESS_HOLDER_NODE), 'PH');
+		g_process_holder = (PPROCESS_HOLDER)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(PROCESS_HOLDER), 'PH');
 		if (g_process_holder == NULL)
 		{
-			KdPrint(("[Sandcess] -> [ProcessHolderAddProcess_0] ExAllocatePool2 return null."));
+			KdPrint(("[Sandcess] -> [ProcessHolder_ProcessHolderAddProcess] ExAllocatePool2 return null."));
 			ret = FALSE;
 			goto CLEANUP;
 		}
@@ -31,12 +31,12 @@ ProcessHolderAddProcess(
 		g_process_holder->next_node = NULL;
 		goto CLEANUP;
 	}
-	PROCESS_HOLDER_NODE* target_node = NULL;
+	PPROCESS_HOLDER target_node = NULL;
 
-	target_node = (PROCESS_HOLDER_NODE*)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(PROCESS_HOLDER_NODE), 'PH');
+	target_node = (PPROCESS_HOLDER)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(PROCESS_HOLDER), 'PH');
 	if (target_node == NULL)
 	{
-		KdPrint(("[Sandcess] -> [ProcessHolderAddProcess_0] ExAllocatePool2 return null."));
+		KdPrint(("[Sandcess] -> [ProcessHolder_ProcessHolderAddProcess] ExAllocatePool2 return null."));
 		ret = FALSE;
 		goto CLEANUP;
 	}
@@ -53,7 +53,7 @@ CLEANUP:
 
 VOID
 ProcessHolderDeleteProcess(
-	_In_ const HANDLE process_id
+	_In_ HANDLE process_id
 )
 {
 	SyncFastMutexLock();
@@ -72,8 +72,8 @@ ProcessHolderDeleteProcess(
 		g_process_holder = g_process_holder->next_node;
 		goto CLEANUP;
 	}
-	PROCESS_HOLDER_NODE* trace_node = g_process_holder;
-	PROCESS_HOLDER_NODE* prev_node = NULL;
+	PPROCESS_HOLDER trace_node = g_process_holder;
+	PPROCESS_HOLDER prev_node = NULL;
 
 	do
 	{
@@ -103,7 +103,7 @@ ProcessHolderGetProcessCount()
 	UINT32 ret = 0;
 	if (g_process_holder == NULL)
 		goto CLEANUP;
-	PROCESS_HOLDER_NODE *trace_node = g_process_holder;
+	PPROCESS_HOLDER trace_node = g_process_holder;
 
 	for (; trace_node->process_id != NULL; ret++)
 	{
@@ -126,8 +126,8 @@ ProcessHolderRelease()
 	if (g_process_holder == NULL)
 		goto CLEANUP;
 
-	PROCESS_HOLDER_NODE* trace_node = g_process_holder;
-	PROCESS_HOLDER_NODE* prev_node = NULL;
+	PPROCESS_HOLDER trace_node = g_process_holder;
+	PPROCESS_HOLDER prev_node = NULL;
 
 	while (&trace_node != NULL)
 	{

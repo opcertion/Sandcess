@@ -7,25 +7,25 @@
 
 
 #pragma pack( push, 1 )
-typedef struct _PROCESS_HOLDER_NODE
+typedef struct _PROCESS_HOLDER
 {
 	HANDLE process_id;
-	struct _PROCESS_HOLDER_NODE* next_node;
-} PROCESS_HOLDER_NODE;
+	struct _PROCESS_HOLDER* next_node;
+} PROCESS_HOLDER, *PPROCESS_HOLDER;
 #pragma pack( pop )
 
 
-extern PROCESS_HOLDER_NODE* g_process_holder; // ProcessHolder.c
+extern PPROCESS_HOLDER g_process_holder; // ProcessHolder.c
 
 
 BOOLEAN
 ProcessHolderAddProcess(
-	_In_ const HANDLE process_id
+	_In_ HANDLE process_id
 );
 
 VOID
 ProcessHolderDeleteProcess(
-	_In_ const HANDLE process_id
+	_In_ HANDLE process_id
 );
 
 UINT32

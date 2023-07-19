@@ -32,7 +32,7 @@ int wmain(const int argc, const wchar_t* argv[])
 		miniflt::USER_TO_FLT req; ZeroMemory(&req, sizeof(req));
 		miniflt::FLT_TO_USER resp; ZeroMemory(&resp, sizeof(resp));
 
-		wcsncpy_s(req.buffer, argv[2], MSG_BUFFER_SIZE);
+		wcsncpy_s(req.buffer, argv[2], MSG_BUFFER_SIZE / sizeof(WCHAR));
 		resp = comm_controller.Send(&req);
 
 		wprintf(L"%s", resp.buffer);

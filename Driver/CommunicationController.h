@@ -4,7 +4,9 @@
 
 #include <fltKernel.h>
 #include "ProcessHolder.h"
+#include "AccessController.h"
 #include "StringUtils.h"
+#include "sync.h"
 
 
 #define MINIFLT_PORT_NAME			L"\\SandcessMinifltPort"

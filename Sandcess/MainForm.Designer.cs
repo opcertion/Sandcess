@@ -38,10 +38,16 @@
             tabPageFileSystem = new TabPage();
             panelListViewFileSystemFile = new Panel();
             listViewFileSystemFile = new ListView();
+            columnHeaderFileName = new ColumnHeader();
+            columnHeaderFilePath = new ColumnHeader();
             panelFileSystemPermissionSetting = new Panel();
             btnFileSystemPermissionApply = new FontAwesome.Sharp.IconButton();
             tabControlFileSystemPermission = new TabControl();
             tabPageFileSystemPermissionFile = new TabPage();
+            checkedListBoxFileSystemPermissionFile = new CheckedListBox();
+            labelFileSystemPermissionFile = new Label();
+            labelFileSystemPermissionDirectory = new Label();
+            checkedListBoxFileSystemPermissionDirectory = new CheckedListBox();
             tabPageFileSystemPermissionProcess = new TabPage();
             tabPageFileSystemPermissionNetwork = new TabPage();
             tabPageFileSystemPermissionContainer = new TabPage();
@@ -63,6 +69,7 @@
             panelListViewFileSystemFile.SuspendLayout();
             panelFileSystemPermissionSetting.SuspendLayout();
             tabControlFileSystemPermission.SuspendLayout();
+            tabPageFileSystemPermissionFile.SuspendLayout();
             tabPageProcess.SuspendLayout();
             SuspendLayout();
             // 
@@ -401,6 +408,7 @@
             // 
             // listViewFileSystemFile
             // 
+            listViewFileSystemFile.Columns.AddRange(new ColumnHeader[] { columnHeaderFileName, columnHeaderFilePath });
             listViewFileSystemFile.Dock = DockStyle.Fill;
             listViewFileSystemFile.Location = new Point(0, 0);
             listViewFileSystemFile.Name = "listViewFileSystemFile";
@@ -408,6 +416,16 @@
             listViewFileSystemFile.TabIndex = 0;
             listViewFileSystemFile.UseCompatibleStateImageBehavior = false;
             listViewFileSystemFile.View = View.Details;
+            // 
+            // columnHeaderFileName
+            // 
+            columnHeaderFileName.Text = "File Name";
+            columnHeaderFileName.Width = 200;
+            // 
+            // columnHeaderFilePath
+            // 
+            columnHeaderFilePath.Text = "File Path";
+            columnHeaderFilePath.Width = 400;
             // 
             // panelFileSystemPermissionSetting
             // 
@@ -431,6 +449,7 @@
             btnFileSystemPermissionApply.TabIndex = 1;
             btnFileSystemPermissionApply.Text = "Permission Apply";
             btnFileSystemPermissionApply.UseVisualStyleBackColor = true;
+            btnFileSystemPermissionApply.Click += btnFileSystemPermissionApply_Click;
             // 
             // tabControlFileSystemPermission
             // 
@@ -447,6 +466,10 @@
             // 
             // tabPageFileSystemPermissionFile
             // 
+            tabPageFileSystemPermissionFile.Controls.Add(checkedListBoxFileSystemPermissionFile);
+            tabPageFileSystemPermissionFile.Controls.Add(labelFileSystemPermissionFile);
+            tabPageFileSystemPermissionFile.Controls.Add(labelFileSystemPermissionDirectory);
+            tabPageFileSystemPermissionFile.Controls.Add(checkedListBoxFileSystemPermissionDirectory);
             tabPageFileSystemPermissionFile.Font = new Font("Microsoft YaHei", 9F, FontStyle.Regular, GraphicsUnit.Point);
             tabPageFileSystemPermissionFile.Location = new Point(4, 29);
             tabPageFileSystemPermissionFile.Name = "tabPageFileSystemPermissionFile";
@@ -455,6 +478,42 @@
             tabPageFileSystemPermissionFile.TabIndex = 0;
             tabPageFileSystemPermissionFile.Text = "File";
             tabPageFileSystemPermissionFile.UseVisualStyleBackColor = true;
+            // 
+            // checkedListBoxFileSystemPermissionFile
+            // 
+            checkedListBoxFileSystemPermissionFile.FormattingEnabled = true;
+            checkedListBoxFileSystemPermissionFile.Items.AddRange(new object[] { "Read", "Write", "Create", "Delete", "Move" });
+            checkedListBoxFileSystemPermissionFile.Location = new Point(20, 61);
+            checkedListBoxFileSystemPermissionFile.Name = "checkedListBoxFileSystemPermissionFile";
+            checkedListBoxFileSystemPermissionFile.Size = new Size(223, 114);
+            checkedListBoxFileSystemPermissionFile.TabIndex = 0;
+            // 
+            // labelFileSystemPermissionFile
+            // 
+            labelFileSystemPermissionFile.AutoSize = true;
+            labelFileSystemPermissionFile.Location = new Point(20, 38);
+            labelFileSystemPermissionFile.Name = "labelFileSystemPermissionFile";
+            labelFileSystemPermissionFile.Size = new Size(34, 20);
+            labelFileSystemPermissionFile.TabIndex = 2;
+            labelFileSystemPermissionFile.Text = "File";
+            // 
+            // labelFileSystemPermissionDirectory
+            // 
+            labelFileSystemPermissionDirectory.AutoSize = true;
+            labelFileSystemPermissionDirectory.Location = new Point(20, 255);
+            labelFileSystemPermissionDirectory.Name = "labelFileSystemPermissionDirectory";
+            labelFileSystemPermissionDirectory.Size = new Size(77, 20);
+            labelFileSystemPermissionDirectory.TabIndex = 3;
+            labelFileSystemPermissionDirectory.Text = "Directory";
+            // 
+            // checkedListBoxFileSystemPermissionDirectory
+            // 
+            checkedListBoxFileSystemPermissionDirectory.FormattingEnabled = true;
+            checkedListBoxFileSystemPermissionDirectory.Items.AddRange(new object[] { "Create", "Delete", "Open" });
+            checkedListBoxFileSystemPermissionDirectory.Location = new Point(20, 278);
+            checkedListBoxFileSystemPermissionDirectory.Name = "checkedListBoxFileSystemPermissionDirectory";
+            checkedListBoxFileSystemPermissionDirectory.Size = new Size(223, 136);
+            checkedListBoxFileSystemPermissionDirectory.TabIndex = 1;
             // 
             // tabPageFileSystemPermissionProcess
             // 
@@ -576,6 +635,8 @@
             panelListViewFileSystemFile.ResumeLayout(false);
             panelFileSystemPermissionSetting.ResumeLayout(false);
             tabControlFileSystemPermission.ResumeLayout(false);
+            tabPageFileSystemPermissionFile.ResumeLayout(false);
+            tabPageFileSystemPermissionFile.PerformLayout();
             tabPageProcess.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -618,5 +679,11 @@
         private ColumnHeader columnHeaderProcessName;
         private ColumnHeader columnHeaderProcessPath;
         private ColumnHeader columnHeaderProcessContainer;
+        private CheckedListBox checkedListBoxFileSystemPermissionFile;
+        private CheckedListBox checkedListBoxFileSystemPermissionDirectory;
+        private Label labelFileSystemPermissionFile;
+        private Label labelFileSystemPermissionDirectory;
+        private ColumnHeader columnHeaderFileName;
+        private ColumnHeader columnHeaderFilePath;
     }
 }
