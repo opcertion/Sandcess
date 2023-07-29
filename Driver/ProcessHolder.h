@@ -2,7 +2,7 @@
 #define __PROCESS_HOLDER_H__
 
 
-#include <ntddk.h>
+#include <fltKernel.h>
 #include "sync.h"
 
 

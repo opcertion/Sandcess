@@ -7,8 +7,8 @@ WstringEqual(
 	_In_ PWCHAR wstr2
 )
 {
-	const SIZE_T wstr1_length = wcslen(wstr1);
-	const SIZE_T wstr2_length = wcslen(wstr2);
+	CONST SIZE_T wstr1_length = wcslen(wstr1);
+	CONST SIZE_T wstr2_length = wcslen(wstr2);
 	
 	if (wstr1_length != wstr2_length)
 		return FALSE;
@@ -28,8 +28,8 @@ WstringStartswith(
 	_In_ PWCHAR wstr2
 )
 {
-	const SIZE_T wstr1_length = wcslen(wstr1);
-	const SIZE_T wstr2_length = wcslen(wstr2);
+	CONST SIZE_T wstr1_length = wcslen(wstr1);
+	CONST SIZE_T wstr2_length = wcslen(wstr2);
 
 	if (wstr1_length < wstr2_length)
 		return FALSE;
@@ -61,7 +61,27 @@ WstringSubstr(
 		KdPrint(("[Sandcess] -> [StringUtils_WstringSubstr] ExAllocatePool2 return null."));
 		return NULL;
 	}
-	RtlCopyMemory(ret, &wstr[idx1], idx2 - 1);
+	RtlCopyMemory(ret, &wstr[idx1], (idx2 - idx1) * sizeof(WCHAR));
 	ret[idx2] = L'\0';
 	return ret;
 }
+
+
+#pragma warning( push )
+#pragma warning( disable:6001 )
+VOID
+UnicodeStringNormalize(
+	_Out_ PUNICODE_STRING str
+)
+{
+	SIZE_T chIdx = 0;
+	for (SIZE_T idx = 0; idx < str->MaximumLength / sizeof(WCHAR); idx++)
+	{
+		if (str->Buffer[idx] >= 0x20)
+			str->Buffer[chIdx++] = str->Buffer[idx];
+	}
+	for (SIZE_T idx = chIdx; idx < str->MaximumLength / sizeof(WCHAR); idx++)
+		str->Buffer[idx] = L'\0';
+	str->Length = (USHORT)chIdx * sizeof(WCHAR);
+}
+#pragma warning( pop )

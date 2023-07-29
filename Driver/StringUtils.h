@@ -3,6 +3,7 @@
 
 
 #include <ntddk.h>
+#include "sync.h"
 
 
 BOOLEAN
@@ -22,6 +23,12 @@ WstringSubstr(
 	_In_ PWCHAR wstr,
 	_In_ SIZE_T idx1,
 	_In_ SIZE_T idx2
+);
+
+
+VOID
+UnicodeStringNormalize(
+	_Out_ PUNICODE_STRING str
 );
 
 

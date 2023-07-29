@@ -61,7 +61,7 @@ ProcessHolderDeleteProcess(
 	if (g_process_holder == NULL || g_process_holder->process_id == NULL || process_id == NULL)
 		goto CLEANUP;
 
-	const UINT32 target_pid = PtrToUint(process_id);
+	CONST UINT32 target_pid = PtrToUint(process_id);
 	if (PtrToUint(g_process_holder->process_id) == target_pid)
 	{
 		if (g_process_holder->next_node == NULL)

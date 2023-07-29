@@ -35,7 +35,7 @@ DriverEntry(
 	status = IoCreateSymbolicLink(&g_device_name, &g_dos_device_name);
 	CHECK_ERROR(IoCreateSymbolicLink, status, CLEANUP);
 
-
+	
 	// ==================== [ Sync ] ====================
 	SyncMutexInitialize();
 

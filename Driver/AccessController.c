@@ -24,9 +24,13 @@ AccessControllerSetPermission(
 	_In_ UINT32			permission
 )
 {
-	PACCESS_INFO trace_node = g_access_info;
+	SyncFastMutexLock();
+	UnicodeStringNormalize(&path);
 
-	for (USHORT idx = 0; idx < path.Length / sizeof(WCHAR); idx++)
+	PACCESS_INFO trace_node = g_access_info;
+	BOOLEAN ret = TRUE;
+
+	for (USHORT idx = 8; idx < path.Length / sizeof(WCHAR); idx++)
 	{
 		UCHAR ch1 = (UCHAR)((path.Buffer[idx] & 0xff00) >> 8);
 		UCHAR ch2 = (UCHAR)(path.Buffer[idx] & 0x00ff);
@@ -37,7 +41,8 @@ AccessControllerSetPermission(
 			if (trace_node->next_nodes[ch1] == NULL)
 			{
 				KdPrint(("[Sandcess] -> [AccessController_AccessControllerSetPermission] ExAllocatePool2 return null."));
-				return FALSE;
+				ret = FALSE;
+				goto CLEANUP;
 			}
 		}
 		trace_node = trace_node->next_nodes[ch1];
@@ -48,13 +53,17 @@ AccessControllerSetPermission(
 			if (trace_node->next_nodes[ch2] == NULL)
 			{
 				KdPrint(("[Sandcess] -> [AccessController_AccessControllerSetPermission] ExAllocatePool2 return null."));
-				return FALSE;
+				ret = FALSE;
+				goto CLEANUP;
 			}
 		}
 		trace_node = trace_node->next_nodes[ch2];
 	}
 	trace_node->permission = permission;
-	return TRUE;
+
+CLEANUP:
+	SyncFastMutexUnlock();
+	return ret;
 }
 
 
@@ -63,26 +72,40 @@ AccessControllerGetPermission(
 	_In_ UNICODE_STRING path
 )
 {
-	PACCESS_INFO trace_node = g_access_info;
+	SyncFastMutexLock();
+	UnicodeStringNormalize(&path);
 
-	for (USHORT idx = 0; idx < path.Length / sizeof(WCHAR); idx++)
+	PACCESS_INFO trace_node = g_access_info;
+	trace_node->permission = (UINT32)0xffffffff;
+	UINT32 ret = 0u;
+
+	for (USHORT idx = 8; idx < path.Length / sizeof(WCHAR); idx++)
 	{
 		UCHAR ch1 = (UCHAR)((path.Buffer[idx] & 0xff00) >> 8);
 		UCHAR ch2 = (UCHAR)(path.Buffer[idx] & 0x00ff);
 
 		if (trace_node->next_nodes[ch1] == NULL)
-			return 0u;
+		{
+			ret = (UINT32)0xffffffff;
+			goto CLEANUP;
+		}
 		trace_node = trace_node->next_nodes[ch1];
 
 		if (trace_node->next_nodes[ch2] == NULL)
-			return 0u;
+		{
+			ret = (UINT32)0xffffffff;
+			goto CLEANUP;
+		}
 		trace_node = trace_node->next_nodes[ch2];
 	}
-	return trace_node->permission;
+	ret = trace_node->permission;
+
+CLEANUP:
+	SyncFastMutexUnlock();
+	return ret;
 }
 
 
-__inline
 BOOLEAN
 AccessControllerIsAllowAccess(
 	_In_ UINT32			permission,

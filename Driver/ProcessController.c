@@ -3,44 +3,42 @@
 
 VOID
 CreateProcessNotifyRoutine(
-	_In_ HANDLE		parent_id,
-	_In_ HANDLE		process_id,
-	_In_ BOOLEAN	flag
+	_Inout_		PEPROCESS				process,
+	_In_		HANDLE					process_id,
+	_Inout_opt_	PPS_CREATE_NOTIFY_INFO	create_info
 )
 {
-	/* Create Process */
-	if (flag)
-	{
-		ProcessHolderAddProcess(process_id);
+	UNREFERENCED_PARAMETER(process);
+	UNREFERENCED_PARAMETER(process_id);
 
-		KdPrint((
-			"[Sandcess] -> [PID: %u] Created (Parent ID: %u).\n",
-			PtrToUint(process_id),
-			PtrToUint(parent_id)
-		));
-	}
-	/* Delete Process */
-	else
+	if (create_info == NULL)
 	{
-		ProcessHolderDeleteProcess(process_id);
-
-		KdPrint((
-			"[Sandcess] -> [PID: %u] Deleted(Parent ID: %u).\n",
-			PtrToUint(process_id),
-			PtrToUint(parent_id)
-		));
+		//ProcessHolderDeleteProcess(process_id);
+		return;
 	}
-	KdPrint((
-		"[Sandcess] -> Process Count: %u.\n",
-		ProcessHolderGetProcessCount()
-	));
+	//ProcessHolderAddProcess(process_id);
+
+	HANDLE parent_process_id = PsGetCurrentProcessId();
+	UNICODE_STRING parent_process_path; RtlZeroMemory(&parent_process_path, sizeof(parent_process_path));
+
+	parent_process_path = GetProcessPathFromProcessId(parent_process_id);
+	if (parent_process_path.Buffer == NULL)
+		return;
+	UINT32 permission = AccessControllerGetPermission(parent_process_path);
+
+	if (!AccessControllerIsAllowAccess(permission, CREATE_PROCESS))
+	{
+		create_info->CreationStatus = STATUS_UNSUCCESSFUL;
+	}
+
+	RtlFreeUnicodeString(&parent_process_path);
 }
 
 
 NTSTATUS
 ProcessControllerInitialize()
 {
-	return PsSetCreateProcessNotifyRoutine(
+	return PsSetCreateProcessNotifyRoutineEx(
 		CreateProcessNotifyRoutine,
 		FALSE
 	);
@@ -50,7 +48,7 @@ ProcessControllerInitialize()
 VOID
 ProcessControllerRelease()
 {
-	PsSetCreateProcessNotifyRoutine(
+	PsSetCreateProcessNotifyRoutineEx(
 		CreateProcessNotifyRoutine,
 		TRUE
 	);

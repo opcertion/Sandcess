@@ -1,7 +1,11 @@
 #ifndef __PROCESS_CONTROLLER_H__
 #define __PROCESS_CONTROLLER_H__
 
+
 #include "ProcessHolder.h"
+#include "AccessController.h"
+#include "ProcessUtils.h"
+#include "StringUtils.h"
 
 
 NTSTATUS

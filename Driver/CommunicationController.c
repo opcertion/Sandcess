@@ -59,18 +59,21 @@ MinifltPortMessageRoutine(
 )
 {
 	UNREFERENCED_PARAMETER(port_cookie);
-	SyncFastMutexLock();
 
 	PUSER_TO_FLT req; RtlZeroMemory(&req, sizeof(req));
 	PFLT_TO_USER resp; RtlZeroMemory(&resp, sizeof(resp));
 
-	if (input_buffer && input_buffer_size == sizeof(USER_TO_FLT))
+	if (input_buffer != NULL && input_buffer_size == sizeof(USER_TO_FLT))
 	{
 		req = (PUSER_TO_FLT)input_buffer;
 
 		if (WstringStartswith(req->buffer, L"SetPermission"))
 		{
-			const SIZE_T req_buffer_length = wcsnlen(req->buffer, MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR));
+			CONST SIZE_T req_buffer_length = wcsnlen(req->buffer, MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR));
+
+			if (req_buffer_length <= 18)
+				goto CLEANUP;
+			
 			UNICODE_STRING path; RtlZeroMemory(&path, sizeof(path));
 			UINT32 permission = 0u;
 
@@ -78,25 +81,24 @@ MinifltPortMessageRoutine(
 			if (path.Buffer == NULL)
 				goto CLEANUP;
 
-			path.Length = (USHORT)((req_buffer_length - 16) * sizeof(WCHAR));
+			path.Length = (USHORT)(req_buffer_length - 17) * sizeof(WCHAR);
 			path.MaximumLength = path.Length;
 			permission = (UINT32)(
 				(UINT32)((req->buffer[req_buffer_length - 2]) << 16) |
 				(UINT32)(req->buffer[req_buffer_length - 1])
 			);
 			AccessControllerSetPermission(path, permission);
-			ExFreePool(path.Buffer);
+			RtlFreeUnicodeString(&path);
 		}
 	}
 
-	if (output_buffer && output_buffer_size == sizeof(FLT_TO_USER))
+	if (output_buffer != NULL && output_buffer_size == sizeof(FLT_TO_USER))
 	{
 		resp = (PFLT_TO_USER)output_buffer;
 		wcscpy(resp->buffer, L"0");
 		*return_output_buffer_size = sizeof(resp->buffer);
 	}
 CLEANUP:
-	SyncFastMutexUnlock();
 	return STATUS_SUCCESS;
 }
 #pragma warning( pop )

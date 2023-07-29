@@ -3,7 +3,9 @@
 
 
 #include <fltKernel.h>
+#include "StringUtils.h"
 #include "FileUtils.h"
+#include "sync.h"
 
 
 typedef enum _ACCESS_TYPE
@@ -19,13 +21,12 @@ typedef enum _ACCESS_TYPE
 	CREATE_DIRECTORY,
 	DELETE_DIRECTORY,
 	OPEN_DIRECTORY,
+	/* Process */
+	CREATE_PROCESS,
+	KILL_PROCESS,
 	/* Network */
 	SEND_PACKET,
 	RECV_PACKET,
-	/* Process */
-	CREATE_PROCESS,
-	RUN_PROCESS,
-	KILL_PROCESS,
 	__DUMMY1,
 	__DUMMY2,
 	__DUMMY3,
@@ -41,6 +42,7 @@ typedef enum _ACCESS_TYPE
 	__DUMMY13,
 	__DUMMY14,
 	__DUMMY15,
+	__DUMMY16,
 	__RESERVED3,
 	__RESERVED4
 } ACCESS_TYPE;
@@ -57,7 +59,7 @@ AccessControllerGetPermission(
 	_In_ UNICODE_STRING path
 );
 
-__inline
+
 BOOLEAN
 AccessControllerIsAllowAccess(
 	_In_ UINT32			permission,
