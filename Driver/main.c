@@ -91,6 +91,5 @@ Cleanup()
 {
 	AccessControllerRelease();
 	ProcessControllerRelease();
-	ProcessHolderRelease();
 	SyncFastMutexUnlock();
 }

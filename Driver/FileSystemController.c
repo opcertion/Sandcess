@@ -16,12 +16,12 @@ FLT_PREOP_CALLBACK_STATUS
 MinifltCreatePreRoutine(
 	_Inout_	PFLT_CALLBACK_DATA		data,
 	_In_	PCFLT_RELATED_OBJECTS	flt_object,
-	_Out_	PVOID*					completion_context
+	_Out_	PVOID					*completion_context
 )
 {
 	UNREFERENCED_PARAMETER(flt_object);
 	UNREFERENCED_PARAMETER(completion_context);
-
+	
 	NTSTATUS status = STATUS_SUCCESS;
 	PFLT_FILE_NAME_INFORMATION name_info = NULL;
 
@@ -45,6 +45,14 @@ MinifltCreatePreRoutine(
 	// &name_info->ParentDir
 	// &name_info->FinalComponent
 
+	HANDLE parent_process_id = PsGetCurrentProcessId();
+	UNICODE_STRING parent_process_path; RtlZeroMemory(&parent_process_path, sizeof(parent_process_path));
+
+	parent_process_path = GetProcessPathFromProcessId(parent_process_id);
+	if (parent_process_path.Buffer == NULL)
+		return FLT_PREOP_SUCCESS_NO_CALLBACK;
+
+	RtlFreeUnicodeString(&parent_process_path);
 	FltReleaseFileNameInformation(name_info);
 	return FLT_PREOP_SUCCESS_WITH_CALLBACK;
 }

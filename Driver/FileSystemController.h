@@ -4,6 +4,7 @@
 
 #include <fltKernel.h>
 #include "AccessController.h"
+#include "ProcessUtils.h"
 
 
 NTSTATUS

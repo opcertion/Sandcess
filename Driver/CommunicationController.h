@@ -3,7 +3,6 @@
 
 
 #include <fltKernel.h>
-#include "ProcessHolder.h"
 #include "AccessController.h"
 #include "StringUtils.h"
 #include "sync.h"

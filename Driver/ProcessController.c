@@ -12,11 +12,7 @@ CreateProcessNotifyRoutine(
 	UNREFERENCED_PARAMETER(process_id);
 
 	if (create_info == NULL)
-	{
-		//ProcessHolderDeleteProcess(process_id);
 		return;
-	}
-	//ProcessHolderAddProcess(process_id);
 
 	HANDLE parent_process_id = PsGetCurrentProcessId();
 	UNICODE_STRING parent_process_path; RtlZeroMemory(&parent_process_path, sizeof(parent_process_path));

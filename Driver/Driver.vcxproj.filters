@@ -33,9 +33,6 @@
     <ClCompile Include="sync.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessHolder.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ProcessController.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -66,9 +63,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ProcessController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ProcessHolder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="sync.h">

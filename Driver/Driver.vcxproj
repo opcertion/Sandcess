@@ -106,7 +106,6 @@
     <ClCompile Include="MinifltController.c" />
     <ClCompile Include="pch.c" />
     <ClCompile Include="ProcessController.c" />
-    <ClCompile Include="ProcessHolder.c" />
     <ClCompile Include="ProcessUtils.c" />
     <ClCompile Include="StringUtils.c" />
     <ClCompile Include="sync.c" />
@@ -119,7 +118,6 @@
     <ClInclude Include="MinifltController.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ProcessController.h" />
-    <ClInclude Include="ProcessHolder.h" />
     <ClInclude Include="ProcessUtils.h" />
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="sync.h" />
