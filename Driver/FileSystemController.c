@@ -2,11 +2,9 @@
 
 
 NTSTATUS
-FileSystemControllerInitialize(
-	_In_	PFLT_FILTER		flt_handle
-)
+FileSystemControllerInitialize()
 {
-	return FltStartFiltering(flt_handle);
+	return FltStartFiltering(g_flt_handle);
 }
 
 

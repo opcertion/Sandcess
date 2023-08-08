@@ -57,6 +57,9 @@
     <ClCompile Include="ProcessUtils.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AgentController.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -87,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ProcessUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AgentController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

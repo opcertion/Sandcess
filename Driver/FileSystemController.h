@@ -2,15 +2,13 @@
 #define __FILE_SYSTEM_CONTROLLER_H__
 
 
-#include <fltKernel.h>
+#include "MinifltController.h"
 #include "AccessController.h"
 #include "ProcessUtils.h"
 
 
 NTSTATUS
-FileSystemControllerInitialize(
-	_In_ PFLT_FILTER flt_handle
-);
+FileSystemControllerInitialize();
 
 FLT_PREOP_CALLBACK_STATUS
 MinifltCreatePreRoutine(

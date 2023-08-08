@@ -25,8 +25,23 @@ CreateProcessNotifyRoutine(
 	if (!AccessControllerIsAllowAccess(permission, CREATE_PROCESS))
 	{
 		create_info->CreationStatus = STATUS_UNSUCCESSFUL;
-	}
 
+		WCHAR toast_message[MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR)] = { 0 };
+		INT32 backslash_idx = parent_process_path.Length - 1;
+		for (; backslash_idx >= 0 && parent_process_path.Buffer[backslash_idx] != L'\\'; backslash_idx--) { }
+		backslash_idx += 1;
+		for (INT32 idx = backslash_idx; idx < parent_process_path.Length; idx++)
+			toast_message[idx - backslash_idx] = parent_process_path.Buffer[idx];
+
+		if (parent_process_path.Length - backslash_idx < MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR) - 48)
+		{
+			wcscpy(
+				&toast_message[wcslen(toast_message)],
+				L" access to the Create Process has been blocked."
+			);
+			AgentControllerShowAccessBlockedToast(toast_message);
+		}
+	}
 	RtlFreeUnicodeString(&parent_process_path);
 }
 

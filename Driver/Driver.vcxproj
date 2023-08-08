@@ -99,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AccessController.c" />
+    <ClCompile Include="AgentController.c" />
     <ClCompile Include="CommunicationController.c" />
     <ClCompile Include="FileSystemController.c" />
     <ClCompile Include="FileUtils.c" />
@@ -112,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AccessController.h" />
+    <ClInclude Include="AgentController.h" />
     <ClInclude Include="CommunicationController.h" />
     <ClInclude Include="FileSystemController.h" />
     <ClInclude Include="FileUtils.h" />

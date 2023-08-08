@@ -51,12 +51,12 @@ DriverEntry(
 
 
 	// ==================== [ File System Controller ] ====================
-	status = FileSystemControllerInitialize(g_flt_handle);
+	status = FileSystemControllerInitialize();
 	CHECK_ERROR(FileSystemControllerInitialize, status, CLEANUP);
 
 
 	// ==================== [ Communication Port ] ====================
-	status = CommunicationControllerInitialize(g_flt_handle);
+	status = CommunicationControllerInitialize();
 	CHECK_ERROR(CommunicationControllerInitialize, status, CLEANUP);
 
 

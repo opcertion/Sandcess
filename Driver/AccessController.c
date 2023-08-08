@@ -120,7 +120,7 @@ NTSTATUS
 AccessControllerInitialize()
 {
 	RtlZeroMemory(&g_access_info_file, sizeof(g_access_info_file));
-	UNICODE_STRING access_info_file_path = RTL_CONSTANT_STRING(L"\\??\\C:\\Sandcess\\SANDCESS.DAT");
+	UNICODE_STRING access_info_file_path = RTL_CONSTANT_STRING(L"\\??\\C:\\Sandcess\\ACCESS_INFO.DAT");
 
 	g_access_info_file = OpenFile(access_info_file_path);
 	if (!NT_SUCCESS(g_access_info_file.status))
@@ -140,6 +140,6 @@ AccessControllerInitialize()
 VOID
 AccessControllerRelease()
 {
-	if (g_access_info_file.handle != NULL)
+	if (g_access_info_file.handle)
 		ZwClose(g_access_info_file.handle);
 }

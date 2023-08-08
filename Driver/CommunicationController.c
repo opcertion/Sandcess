@@ -1,18 +1,8 @@
 #include "CommunicationController.h"
 
 
-typedef struct _USER_TO_FLT
-{
-	WCHAR buffer[MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR)];
-} USER_TO_FLT, *PUSER_TO_FLT;
-
-typedef struct _FLT_TO_UESR
-{
-	WCHAR buffer[MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR)];
-} FLT_TO_USER, *PFLT_TO_USER;
-
-
 PFLT_PORT g_flt_port = NULL;
+PFLT_PORT g_agent_port = NULL;
 
 
 #pragma warning( push )
@@ -26,11 +16,13 @@ MinifltPortConnectRoutine(
 	_Out_	PVOID*		connection_port_cookie
 )
 {
-	UNREFERENCED_PARAMETER(client_port);
 	UNREFERENCED_PARAMETER(server_cookie);
 	UNREFERENCED_PARAMETER(connection_context);
 	UNREFERENCED_PARAMETER(connection_context_size);
 	UNREFERENCED_PARAMETER(connection_port_cookie);
+
+	if (g_agent_port == NULL)
+		g_agent_port = client_port;
 
 	return STATUS_SUCCESS;
 }
@@ -105,9 +97,7 @@ CLEANUP:
 
 
 NTSTATUS
-CommunicationControllerInitialize(
-	_In_ PFLT_FILTER flt_handle
-)
+CommunicationControllerInitialize()
 {
 	NTSTATUS status = STATUS_SUCCESS;
 	UNICODE_STRING port_name = RTL_CONSTANT_STRING(MINIFLT_PORT_NAME);
@@ -130,15 +120,37 @@ CommunicationControllerInitialize(
 	);
 
 	status = FltCreateCommunicationPort(
-		flt_handle,
+		g_flt_handle,
 		&g_flt_port,
 		&object_attributes,
 		NULL,
 		MinifltPortConnectRoutine,
 		MinifltPortDisconnectRoutine,
 		MinifltPortMessageRoutine,
-		1
+		2
 	);
-
 	return status;
+}
+
+
+VOID
+CommunicationControllerSendMessageToAgent(
+	_In_ PFLT_TO_USER message
+)
+{
+	if (g_agent_port == NULL)
+		return;
+
+	LARGE_INTEGER timeout; RtlZeroMemory(&timeout, sizeof(timeout));
+	timeout.QuadPart = 0;
+
+	FltSendMessage(
+		g_flt_handle,
+		&g_agent_port,
+		message,
+		sizeof(FLT_TO_USER),
+		NULL,
+		NULL,
+		&timeout
+	);
 }

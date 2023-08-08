@@ -67,11 +67,9 @@ CLEANUP:
 }
 
 
-HRESULT EnvController::SetupRegistry()
+HRESULT EnvController::Setup()
 {
 	HRESULT h_result;
-
 	h_result = AddRightClickMenuRegistry();
-
 	return h_result;
 }

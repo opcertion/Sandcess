@@ -12,7 +12,7 @@ private:
 	HRESULT AddRightClickMenuRegistry();
 
 public:
-	HRESULT SetupRegistry();
+	HRESULT Setup();
 };
 
 
