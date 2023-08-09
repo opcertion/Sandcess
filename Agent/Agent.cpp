@@ -80,11 +80,11 @@ int wmain(const int argc, const wchar_t* argv[])
 	}
 
 
-	/* show access blocked toast */
-	if (argc == 3 && lstrcmpiW(argv[1], L"--showAccessBlockedToast") == 0)
+	/* show default toast */
+	if (argc == 3 && lstrcmpiW(argv[1], L"--showDefaultToast") == 0)
 	{
 		ToastController toast_controller;
-		toast_controller.ShowAccessBlockedToast(argv[2]);
+		toast_controller.ShowDefaultToast(argv[2]);
 		Sleep(15000);
 		return 0;
 	}

@@ -14,14 +14,20 @@ FLT_PREOP_CALLBACK_STATUS
 MinifltCreatePreRoutine(
 	_Inout_	PFLT_CALLBACK_DATA		data,
 	_In_	PCFLT_RELATED_OBJECTS	flt_object,
-	_Out_	PVOID					*completion_context
+	_Out_	PVOID* completion_context
 )
 {
 	UNREFERENCED_PARAMETER(flt_object);
 	UNREFERENCED_PARAMETER(completion_context);
-	
+
+	FLT_PREOP_CALLBACK_STATUS ret_callback_status = FLT_PREOP_SUCCESS_WITH_CALLBACK;
 	NTSTATUS status = STATUS_SUCCESS;
 	PFLT_FILE_NAME_INFORMATION name_info = NULL;
+	UNICODE_STRING process_path; RtlZeroMemory(&process_path, sizeof(process_path));
+
+	if (data->RequestorMode != UserMode || KeGetCurrentIrql() != PASSIVE_LEVEL || !FLT_IS_IRP_OPERATION(data))
+		goto CLEANUP;
+
 
 	status = FltGetFileNameInformation(
 		data,
@@ -30,29 +36,49 @@ MinifltCreatePreRoutine(
 		&name_info
 	);
 	if (!NT_SUCCESS(status))
-		return FLT_PREOP_SUCCESS_NO_CALLBACK;
+	{
+		ret_callback_status = FLT_PREOP_SUCCESS_NO_CALLBACK;
+		goto CLEANUP;
+	}
 
 	status = FltParseFileNameInformation(name_info);
 	if (!NT_SUCCESS(status))
 	{
-		FltReleaseFileNameInformation(name_info);
-		return FLT_PREOP_SUCCESS_NO_CALLBACK;
+		ret_callback_status = FLT_PREOP_SUCCESS_NO_CALLBACK;
+		goto CLEANUP;
 	}
 
-	// PtrToUint(PsGetCurrentProcessId())
-	// &name_info->ParentDir
-	// &name_info->FinalComponent
+	HANDLE process_id = PsGetCurrentProcessId();
+	if (process_id == NULL)
+		goto CLEANUP;
+	process_path = GetProcessPathFromProcessId(process_id);
+	if (process_path.Buffer == NULL)
+	{
+		ret_callback_status = FLT_PREOP_SUCCESS_NO_CALLBACK;
+		goto CLEANUP;
+	}
 
-	HANDLE parent_process_id = PsGetCurrentProcessId();
-	UNICODE_STRING parent_process_path; RtlZeroMemory(&parent_process_path, sizeof(parent_process_path));
 
-	parent_process_path = GetProcessPathFromProcessId(parent_process_id);
-	if (parent_process_path.Buffer == NULL)
-		return FLT_PREOP_SUCCESS_NO_CALLBACK;
+	UINT32 permission = AccessControllerGetPermission(process_path);
+	/* write file */
+	if (
+		(data->Iopb->MajorFunction == IRP_MJ_CREATE) &&
+		(data->Iopb->Parameters.Create.SecurityContext->DesiredAccess & (FILE_WRITE_DATA | FILE_APPEND_DATA)) &&
+		(!AccessControllerIsAllowAccess(permission, WRITE_FILE))
+	)
+	{
+		data->IoStatus.Status = STATUS_ACCESS_DENIED;
+		data->IoStatus.Information = 0;
+		ret_callback_status = FLT_PREOP_COMPLETE;
+		goto CLEANUP;
+	}
 
-	RtlFreeUnicodeString(&parent_process_path);
-	FltReleaseFileNameInformation(name_info);
-	return FLT_PREOP_SUCCESS_WITH_CALLBACK;
+CLEANUP:
+	if (name_info)
+		FltReleaseFileNameInformation(name_info);
+	if (process_path.Buffer)
+		RtlFreeUnicodeString(&process_path);
+	return ret_callback_status;
 }
 #pragma warning ( pop )
 
@@ -68,9 +94,15 @@ MinifltCreatePostRoutine(
 	UNREFERENCED_PARAMETER(flt_object);
 	UNREFERENCED_PARAMETER(completion_context);
 	UNREFERENCED_PARAMETER(flags);
-
+	
+	FLT_POSTOP_CALLBACK_STATUS ret_callback_status = FLT_POSTOP_FINISHED_PROCESSING;
 	NTSTATUS status = STATUS_SUCCESS;
 	PFLT_FILE_NAME_INFORMATION name_info = NULL;
+
+
+	if (data->RequestorMode != UserMode || KeGetCurrentIrql() != PASSIVE_LEVEL || !FLT_IS_IRP_OPERATION(data))
+		goto CLEANUP;
+
 
 	status = FltGetFileNameInformation(
 		data,
@@ -79,19 +111,14 @@ MinifltCreatePostRoutine(
 		&name_info
 	);
 	if (!NT_SUCCESS(status))
-		return FLT_POSTOP_FINISHED_PROCESSING;
+		goto CLEANUP;
 
 	status = FltParseFileNameInformation(name_info);
 	if (!NT_SUCCESS(status))
-	{
+		goto CLEANUP;
+
+CLEANUP:
+	if (name_info != NULL)
 		FltReleaseFileNameInformation(name_info);
-		return FLT_POSTOP_FINISHED_PROCESSING;
-	}
-
-	// PtrToUint(PsGetCurrentProcessId())
-	// &name_info->ParentDir
-	// &name_info->FinalComponent
-
-	FltReleaseFileNameInformation(name_info);
-	return FLT_POSTOP_FINISHED_PROCESSING;
+	return ret_callback_status;
 }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Markup;
 
 namespace Sandcess
 {
@@ -28,5 +29,19 @@ namespace Sandcess
 			catch { }
 			return "";
 		}
+
+
+		public static void ShowDefaultToast(string content)
+		{
+            try
+            {
+                Process process = new Process();
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.FileName = "C:\\Sandcess\\Agent\\Agent.exe";
+                process.StartInfo.Arguments = "--showDefaultToast \"" + content + "\"";
+                process.Start();
+            }
+            catch { }
+        }
 	}
 }

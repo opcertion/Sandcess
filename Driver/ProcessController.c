@@ -14,14 +14,17 @@ CreateProcessNotifyRoutine(
 	if (create_info == NULL)
 		return;
 
-	HANDLE parent_process_id = PsGetCurrentProcessId();
 	UNICODE_STRING parent_process_path; RtlZeroMemory(&parent_process_path, sizeof(parent_process_path));
 
+	HANDLE parent_process_id = PsGetCurrentProcessId();
+	if (parent_process_id == NULL)
+		return;
 	parent_process_path = GetProcessPathFromProcessId(parent_process_id);
 	if (parent_process_path.Buffer == NULL)
 		return;
 	UINT32 permission = AccessControllerGetPermission(parent_process_path);
 
+	/* Create Process */
 	if (!AccessControllerIsAllowAccess(permission, CREATE_PROCESS))
 	{
 		create_info->CreationStatus = STATUS_UNSUCCESSFUL;
