@@ -488,7 +488,7 @@
             // 
             checkedListBoxFileSystemPermissionFile.CheckOnClick = true;
             checkedListBoxFileSystemPermissionFile.FormattingEnabled = true;
-            checkedListBoxFileSystemPermissionFile.Items.AddRange(new object[] { "Read", "Write", "Delete", "Move" });
+            checkedListBoxFileSystemPermissionFile.Items.AddRange(new object[] { "Read", "Write", "Move" });
             checkedListBoxFileSystemPermissionFile.Location = new Point(20, 61);
             checkedListBoxFileSystemPermissionFile.Name = "checkedListBoxFileSystemPermissionFile";
             checkedListBoxFileSystemPermissionFile.Size = new Size(223, 114);

@@ -1,6 +1,16 @@
 #include "FileSystemController.h"
 
 
+#define PRE_ROUTINE_BLOCK_ACCESS \
+do \
+{ \
+	data->IoStatus.Status = STATUS_UNSUCCESSFUL; \
+	data->IoStatus.Information = 0; \
+	ret_callback_status = FLT_PREOP_COMPLETE; \
+	goto CLEANUP; \
+} while (0);
+
+
 NTSTATUS
 FileSystemControllerInitialize()
 {
@@ -60,6 +70,18 @@ MinifltCreatePreRoutine(
 
 
 	UINT32 permission = AccessControllerGetPermission(process_path);
+	if (permission == (UINT32)0xffffffff)
+		goto CLEANUP;
+
+
+	/* read file */
+	if (
+		(data->Iopb->MajorFunction == IRP_MJ_READ) &&
+		(!AccessControllerIsAllowAccess(permission, READ_FILE))
+	)
+	{
+		PRE_ROUTINE_BLOCK_ACCESS
+	}
 	/* write file */
 	if (
 		(data->Iopb->MajorFunction == IRP_MJ_CREATE) &&
@@ -67,12 +89,42 @@ MinifltCreatePreRoutine(
 		(!AccessControllerIsAllowAccess(permission, WRITE_FILE))
 	)
 	{
-		data->IoStatus.Status = STATUS_ACCESS_DENIED;
-		data->IoStatus.Information = 0;
-		ret_callback_status = FLT_PREOP_COMPLETE;
-		goto CLEANUP;
+		PRE_ROUTINE_BLOCK_ACCESS
+	}
+	/* move file */
+	if (
+		(
+			(data->Iopb->MajorFunction == IRP_MJ_CREATE) ||
+			(data->Iopb->MajorFunction == IRP_MJ_SET_INFORMATION)
+		) &&
+		(!AccessControllerIsAllowAccess(permission, MOVE_FILE))
+	)
+	{
+		if (data->Iopb->MajorFunction == IRP_MJ_CREATE)
+		{
+			if (data->Iopb->Parameters.Create.Options & FILE_DELETE_ON_CLOSE)
+			{
+				PRE_ROUTINE_BLOCK_ACCESS
+			}
+		}
+		else
+		{
+			switch (data->Iopb->Parameters.SetFileInformation.FileInformationClass)
+			{
+			case FileRenameInformation:
+			case FileRenameInformationEx:
+			case FileDispositionInformation:
+			case FileDispositionInformationEx:
+			case FileRenameInformationBypassAccessCheck:
+			case FileRenameInformationExBypassAccessCheck:
+				PRE_ROUTINE_BLOCK_ACCESS
+			default:
+				break;
+			}
+		}
 	}
 
+	
 CLEANUP:
 	if (name_info)
 		FltReleaseFileNameInformation(name_info);

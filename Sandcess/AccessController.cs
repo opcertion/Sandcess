@@ -15,7 +15,6 @@ namespace Sandcess
             /* File System */
             READ_FILE,
             WRITE_FILE,
-            DELETE_FILE,
             MOVE_FILE,
             /* Process */
             CREATE_PROCESS,
@@ -43,6 +42,7 @@ namespace Sandcess
             __DUMMY18,
             __DUMMY19,
             __DUMMY20,
+            __DUMMY21,
             __RESERVED3,
             __RESERVED4
         };

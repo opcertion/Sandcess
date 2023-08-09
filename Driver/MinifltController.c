@@ -25,6 +25,20 @@ FLT_OPERATION_REGISTRATION g_flt_operations[] = {
 		MinifltCreatePostRoutine,			// Post Operation
 		NULL
 	},
+	{
+		IRP_MJ_READ,
+		0,
+		MinifltCreatePreRoutine,
+		MinifltCreatePostRoutine,
+		NULL
+	},
+	{
+		IRP_MJ_SET_INFORMATION,
+		0,
+		MinifltCreatePreRoutine,
+		MinifltCreatePostRoutine,
+		NULL
+	},
 	{ IRP_MJ_OPERATION_END }
 };
 FLT_REGISTRATION g_flt_registration = {
