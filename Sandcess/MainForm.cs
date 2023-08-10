@@ -109,9 +109,9 @@ namespace Sandcess
             int currentAccessType = 2/* reserved bit */;
 
             foreach (CheckedListBox permissionCheckedBox in new CheckedListBox[]{
-                checkedListBoxFileSystemPermissionFile,
-                checkedListBoxProcessPermissionProcess,
-                checkedListBoxNetworkPermissionNetwork
+                checkedListBoxFileSystemPermission,
+                checkedListBoxProcessPermission,
+                checkedListBoxNetworkPermission
             })
             {
                 for (int idx = 0; idx < permissionCheckedBox.Items.Count; idx++)

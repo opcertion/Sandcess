@@ -71,17 +71,17 @@ WstringSubstr(
 #pragma warning( disable:6001 )
 VOID
 UnicodeStringNormalize(
-	_Out_ PUNICODE_STRING str
+	_Inout_ PUNICODE_STRING str
 )
 {
-	SIZE_T chIdx = 0;
+	SIZE_T ch_idx = 0;
 	for (SIZE_T idx = 0; idx < str->MaximumLength / sizeof(WCHAR); idx++)
 	{
 		if (str->Buffer[idx] >= 0x20)
-			str->Buffer[chIdx++] = str->Buffer[idx];
+			str->Buffer[ch_idx++] = str->Buffer[idx];
 	}
-	for (SIZE_T idx = chIdx; idx < str->MaximumLength / sizeof(WCHAR); idx++)
+	for (SIZE_T idx = ch_idx; idx < str->MaximumLength / sizeof(WCHAR); idx++)
 		str->Buffer[idx] = L'\0';
-	str->Length = (USHORT)chIdx * sizeof(WCHAR);
+	str->Length = (USHORT)ch_idx * sizeof(WCHAR);
 }
 #pragma warning( pop )

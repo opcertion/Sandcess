@@ -24,7 +24,7 @@ FLT_PREOP_CALLBACK_STATUS
 MinifltCreatePreRoutine(
 	_Inout_	PFLT_CALLBACK_DATA		data,
 	_In_	PCFLT_RELATED_OBJECTS	flt_object,
-	_Out_	PVOID* completion_context
+	_Out_	PVOID					*completion_context
 )
 {
 	UNREFERENCED_PARAMETER(flt_object);
@@ -74,7 +74,7 @@ MinifltCreatePreRoutine(
 		goto CLEANUP;
 
 
-	/* read file */
+	/* Read File */
 	if (
 		(data->Iopb->MajorFunction == IRP_MJ_READ) &&
 		(!AccessControllerIsAllowAccess(permission, READ_FILE))
@@ -82,7 +82,7 @@ MinifltCreatePreRoutine(
 	{
 		PRE_ROUTINE_BLOCK_ACCESS
 	}
-	/* write file */
+	/* Write File */
 	if (
 		(data->Iopb->MajorFunction == IRP_MJ_CREATE) &&
 		(data->Iopb->Parameters.Create.SecurityContext->DesiredAccess & (FILE_WRITE_DATA | FILE_APPEND_DATA)) &&
@@ -91,7 +91,7 @@ MinifltCreatePreRoutine(
 	{
 		PRE_ROUTINE_BLOCK_ACCESS
 	}
-	/* move file */
+	/* Move File */
 	if (
 		(
 			(data->Iopb->MajorFunction == IRP_MJ_CREATE) ||

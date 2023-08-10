@@ -30,10 +30,10 @@ CreateProcessNotifyRoutine(
 		create_info->CreationStatus = STATUS_UNSUCCESSFUL;
 
 		WCHAR toast_message[MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR)] = { 0 };
-		INT32 backslash_idx = parent_process_path.Length - 1;
-		for (; backslash_idx >= 0 && parent_process_path.Buffer[backslash_idx] != L'\\'; backslash_idx--) { }
+		USHORT backslash_idx = parent_process_path.Length - 1;
+		for (; backslash_idx > 0 && parent_process_path.Buffer[backslash_idx] != L'\\'; backslash_idx--) { }
 		backslash_idx += 1;
-		for (INT32 idx = backslash_idx; idx < parent_process_path.Length; idx++)
+		for (USHORT idx = backslash_idx; idx < parent_process_path.Length; idx++)
 			toast_message[idx - backslash_idx] = parent_process_path.Buffer[idx];
 
 		if (parent_process_path.Length - backslash_idx < MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR) - 48)
@@ -52,18 +52,12 @@ CreateProcessNotifyRoutine(
 NTSTATUS
 ProcessControllerInitialize()
 {
-	return PsSetCreateProcessNotifyRoutineEx(
-		CreateProcessNotifyRoutine,
-		FALSE
-	);
+	return PsSetCreateProcessNotifyRoutineEx(CreateProcessNotifyRoutine, FALSE);
 }
 
 
 VOID
 ProcessControllerRelease()
 {
-	PsSetCreateProcessNotifyRoutineEx(
-		CreateProcessNotifyRoutine,
-		TRUE
-	);
+	PsSetCreateProcessNotifyRoutineEx(CreateProcessNotifyRoutine, TRUE);
 }

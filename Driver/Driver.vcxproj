@@ -109,7 +109,6 @@
     <ClCompile Include="ProcessController.c" />
     <ClCompile Include="ProcessUtils.c" />
     <ClCompile Include="StringUtils.c" />
-    <ClCompile Include="sync.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AccessController.h" />
@@ -122,7 +121,6 @@
     <ClInclude Include="ProcessController.h" />
     <ClInclude Include="ProcessUtils.h" />
     <ClInclude Include="StringUtils.h" />
-    <ClInclude Include="sync.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

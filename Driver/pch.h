@@ -6,7 +6,6 @@
 #include "FileSystemController.h"
 #include "CommunicationController.h"
 #include "ProcessController.h"
-#include "sync.h"
 
 
 #define CHECK_ERROR(_func_name_, _ntstatus_, _to_) \

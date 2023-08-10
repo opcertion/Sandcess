@@ -5,7 +5,6 @@
 #include <fltKernel.h>
 #include "StringUtils.h"
 #include "FileUtils.h"
-#include "sync.h"
 
 
 typedef enum _ACCESS_TYPE
@@ -18,7 +17,6 @@ typedef enum _ACCESS_TYPE
 	MOVE_FILE,
 	/* Process */
 	CREATE_PROCESS,
-	KILL_PROCESS,
 	/* Network */
 	SEND_PACKET,
 	RECV_PACKET,
@@ -43,6 +41,7 @@ typedef enum _ACCESS_TYPE
 	__DUMMY19,
 	__DUMMY20,
 	__DUMMY21,
+	__DUMMY22,
 	__RESERVED3,
 	__RESERVED4
 } ACCESS_TYPE;
@@ -66,8 +65,10 @@ AccessControllerIsAllowAccess(
 	_In_ ACCESS_TYPE	access_type
 );
 
+
 NTSTATUS
 AccessControllerInitialize();
+
 
 VOID
 AccessControllerRelease();

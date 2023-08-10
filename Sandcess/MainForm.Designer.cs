@@ -42,17 +42,14 @@
             columnHeaderFilePath = new ColumnHeader();
             panelFileSystemPermissionSetting = new Panel();
             btnFileSystemPermissionApply = new FontAwesome.Sharp.IconButton();
-            tabControlFileSystemPermission = new TabControl();
-            tabPageFileSystemPermissionFile = new TabPage();
-            checkedListBoxFileSystemPermissionFile = new CheckedListBox();
-            labelFileSystemPermissionFile = new Label();
-            tabPageFileSystemPermissionProcess = new TabPage();
-            checkedListBoxProcessPermissionProcess = new CheckedListBox();
-            labelProcessPermissionProcess = new Label();
-            tabPageFileSystemPermissionNetwork = new TabPage();
-            checkedListBoxNetworkPermissionNetwork = new CheckedListBox();
+            tabControlPermission = new TabControl();
+            tabPagePermission = new TabPage();
+            checkedListBoxNetworkPermission = new CheckedListBox();
             labelNetworkPermissionPacket = new Label();
-            tabPageFileSystemPermissionContainer = new TabPage();
+            checkedListBoxProcessPermission = new CheckedListBox();
+            labelProcessPermissionProcess = new Label();
+            checkedListBoxFileSystemPermission = new CheckedListBox();
+            labelFileSystemPermissionFile = new Label();
             tabPageProcess = new TabPage();
             listViewProcessProcess = new ListView();
             columnHeaderProcessId = new ColumnHeader();
@@ -70,10 +67,8 @@
             tabPageFileSystem.SuspendLayout();
             panelListViewFileSystemFile.SuspendLayout();
             panelFileSystemPermissionSetting.SuspendLayout();
-            tabControlFileSystemPermission.SuspendLayout();
-            tabPageFileSystemPermissionFile.SuspendLayout();
-            tabPageFileSystemPermissionProcess.SuspendLayout();
-            tabPageFileSystemPermissionNetwork.SuspendLayout();
+            tabControlPermission.SuspendLayout();
+            tabPagePermission.SuspendLayout();
             tabPageProcess.SuspendLayout();
             SuspendLayout();
             // 
@@ -437,7 +432,7 @@
             // panelFileSystemPermissionSetting
             // 
             panelFileSystemPermissionSetting.Controls.Add(btnFileSystemPermissionApply);
-            panelFileSystemPermissionSetting.Controls.Add(tabControlFileSystemPermission);
+            panelFileSystemPermissionSetting.Controls.Add(tabControlPermission);
             panelFileSystemPermissionSetting.Dock = DockStyle.Right;
             panelFileSystemPermissionSetting.Location = new Point(706, 4);
             panelFileSystemPermissionSetting.Name = "panelFileSystemPermissionSetting";
@@ -458,122 +453,89 @@
             btnFileSystemPermissionApply.UseVisualStyleBackColor = true;
             btnFileSystemPermissionApply.Click += btnFileSystemPermissionApply_Click;
             // 
-            // tabControlFileSystemPermission
+            // tabControlPermission
             // 
-            tabControlFileSystemPermission.Controls.Add(tabPageFileSystemPermissionFile);
-            tabControlFileSystemPermission.Controls.Add(tabPageFileSystemPermissionProcess);
-            tabControlFileSystemPermission.Controls.Add(tabPageFileSystemPermissionNetwork);
-            tabControlFileSystemPermission.Controls.Add(tabPageFileSystemPermissionContainer);
-            tabControlFileSystemPermission.Dock = DockStyle.Fill;
-            tabControlFileSystemPermission.Location = new Point(0, 0);
-            tabControlFileSystemPermission.Name = "tabControlFileSystemPermission";
-            tabControlFileSystemPermission.SelectedIndex = 0;
-            tabControlFileSystemPermission.Size = new Size(272, 534);
-            tabControlFileSystemPermission.TabIndex = 0;
+            tabControlPermission.Controls.Add(tabPagePermission);
+            tabControlPermission.Dock = DockStyle.Fill;
+            tabControlPermission.Location = new Point(0, 0);
+            tabControlPermission.Name = "tabControlPermission";
+            tabControlPermission.SelectedIndex = 0;
+            tabControlPermission.Size = new Size(272, 534);
+            tabControlPermission.TabIndex = 0;
             // 
-            // tabPageFileSystemPermissionFile
+            // tabPagePermission
             // 
-            tabPageFileSystemPermissionFile.Controls.Add(checkedListBoxFileSystemPermissionFile);
-            tabPageFileSystemPermissionFile.Controls.Add(labelFileSystemPermissionFile);
-            tabPageFileSystemPermissionFile.Font = new Font("Microsoft YaHei", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            tabPageFileSystemPermissionFile.Location = new Point(4, 29);
-            tabPageFileSystemPermissionFile.Name = "tabPageFileSystemPermissionFile";
-            tabPageFileSystemPermissionFile.Padding = new Padding(3);
-            tabPageFileSystemPermissionFile.Size = new Size(264, 501);
-            tabPageFileSystemPermissionFile.TabIndex = 0;
-            tabPageFileSystemPermissionFile.Text = "File";
-            tabPageFileSystemPermissionFile.UseVisualStyleBackColor = true;
+            tabPagePermission.Controls.Add(checkedListBoxNetworkPermission);
+            tabPagePermission.Controls.Add(labelNetworkPermissionPacket);
+            tabPagePermission.Controls.Add(checkedListBoxProcessPermission);
+            tabPagePermission.Controls.Add(labelProcessPermissionProcess);
+            tabPagePermission.Controls.Add(checkedListBoxFileSystemPermission);
+            tabPagePermission.Controls.Add(labelFileSystemPermissionFile);
+            tabPagePermission.Font = new Font("Microsoft YaHei", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            tabPagePermission.Location = new Point(4, 29);
+            tabPagePermission.Name = "tabPagePermission";
+            tabPagePermission.Padding = new Padding(3);
+            tabPagePermission.Size = new Size(264, 501);
+            tabPagePermission.TabIndex = 0;
+            tabPagePermission.Text = "Permission";
+            tabPagePermission.UseVisualStyleBackColor = true;
             // 
-            // checkedListBoxFileSystemPermissionFile
+            // checkedListBoxNetworkPermission
             // 
-            checkedListBoxFileSystemPermissionFile.CheckOnClick = true;
-            checkedListBoxFileSystemPermissionFile.FormattingEnabled = true;
-            checkedListBoxFileSystemPermissionFile.Items.AddRange(new object[] { "Read", "Write", "Move" });
-            checkedListBoxFileSystemPermissionFile.Location = new Point(20, 61);
-            checkedListBoxFileSystemPermissionFile.Name = "checkedListBoxFileSystemPermissionFile";
-            checkedListBoxFileSystemPermissionFile.Size = new Size(223, 114);
-            checkedListBoxFileSystemPermissionFile.TabIndex = 0;
-            // 
-            // labelFileSystemPermissionFile
-            // 
-            labelFileSystemPermissionFile.AutoSize = true;
-            labelFileSystemPermissionFile.Location = new Point(20, 38);
-            labelFileSystemPermissionFile.Name = "labelFileSystemPermissionFile";
-            labelFileSystemPermissionFile.Size = new Size(34, 20);
-            labelFileSystemPermissionFile.TabIndex = 2;
-            labelFileSystemPermissionFile.Text = "File";
-            // 
-            // tabPageFileSystemPermissionProcess
-            // 
-            tabPageFileSystemPermissionProcess.Controls.Add(checkedListBoxProcessPermissionProcess);
-            tabPageFileSystemPermissionProcess.Controls.Add(labelProcessPermissionProcess);
-            tabPageFileSystemPermissionProcess.Location = new Point(4, 29);
-            tabPageFileSystemPermissionProcess.Name = "tabPageFileSystemPermissionProcess";
-            tabPageFileSystemPermissionProcess.Padding = new Padding(3);
-            tabPageFileSystemPermissionProcess.Size = new Size(264, 501);
-            tabPageFileSystemPermissionProcess.TabIndex = 1;
-            tabPageFileSystemPermissionProcess.Text = "Process";
-            tabPageFileSystemPermissionProcess.UseVisualStyleBackColor = true;
-            // 
-            // checkedListBoxProcessPermissionProcess
-            // 
-            checkedListBoxProcessPermissionProcess.CheckOnClick = true;
-            checkedListBoxProcessPermissionProcess.FormattingEnabled = true;
-            checkedListBoxProcessPermissionProcess.Items.AddRange(new object[] { "Create", "Kill" });
-            checkedListBoxProcessPermissionProcess.Location = new Point(22, 61);
-            checkedListBoxProcessPermissionProcess.Name = "checkedListBoxProcessPermissionProcess";
-            checkedListBoxProcessPermissionProcess.Size = new Size(223, 114);
-            checkedListBoxProcessPermissionProcess.TabIndex = 3;
-            // 
-            // labelProcessPermissionProcess
-            // 
-            labelProcessPermissionProcess.AutoSize = true;
-            labelProcessPermissionProcess.Location = new Point(22, 38);
-            labelProcessPermissionProcess.Name = "labelProcessPermissionProcess";
-            labelProcessPermissionProcess.Size = new Size(65, 20);
-            labelProcessPermissionProcess.TabIndex = 4;
-            labelProcessPermissionProcess.Text = "Process";
-            // 
-            // tabPageFileSystemPermissionNetwork
-            // 
-            tabPageFileSystemPermissionNetwork.Controls.Add(checkedListBoxNetworkPermissionNetwork);
-            tabPageFileSystemPermissionNetwork.Controls.Add(labelNetworkPermissionPacket);
-            tabPageFileSystemPermissionNetwork.Location = new Point(4, 29);
-            tabPageFileSystemPermissionNetwork.Name = "tabPageFileSystemPermissionNetwork";
-            tabPageFileSystemPermissionNetwork.Padding = new Padding(3);
-            tabPageFileSystemPermissionNetwork.Size = new Size(264, 501);
-            tabPageFileSystemPermissionNetwork.TabIndex = 2;
-            tabPageFileSystemPermissionNetwork.Text = "Net";
-            tabPageFileSystemPermissionNetwork.UseVisualStyleBackColor = true;
-            // 
-            // checkedListBoxNetworkPermissionNetwork
-            // 
-            checkedListBoxNetworkPermissionNetwork.CheckOnClick = true;
-            checkedListBoxNetworkPermissionNetwork.FormattingEnabled = true;
-            checkedListBoxNetworkPermissionNetwork.Items.AddRange(new object[] { "Send", "Receive" });
-            checkedListBoxNetworkPermissionNetwork.Location = new Point(22, 61);
-            checkedListBoxNetworkPermissionNetwork.Name = "checkedListBoxNetworkPermissionNetwork";
-            checkedListBoxNetworkPermissionNetwork.Size = new Size(223, 114);
-            checkedListBoxNetworkPermissionNetwork.TabIndex = 5;
+            checkedListBoxNetworkPermission.CheckOnClick = true;
+            checkedListBoxNetworkPermission.FormattingEnabled = true;
+            checkedListBoxNetworkPermission.Items.AddRange(new object[] { "Send", "Receive" });
+            checkedListBoxNetworkPermission.Location = new Point(20, 347);
+            checkedListBoxNetworkPermission.Name = "checkedListBoxNetworkPermission";
+            checkedListBoxNetworkPermission.Size = new Size(223, 114);
+            checkedListBoxNetworkPermission.TabIndex = 5;
             // 
             // labelNetworkPermissionPacket
             // 
             labelNetworkPermissionPacket.AutoSize = true;
-            labelNetworkPermissionPacket.Location = new Point(22, 38);
+            labelNetworkPermissionPacket.Location = new Point(20, 324);
             labelNetworkPermissionPacket.Name = "labelNetworkPermissionPacket";
             labelNetworkPermissionPacket.Size = new Size(57, 20);
             labelNetworkPermissionPacket.TabIndex = 6;
             labelNetworkPermissionPacket.Text = "Packet";
             // 
-            // tabPageFileSystemPermissionContainer
+            // checkedListBoxProcessPermission
             // 
-            tabPageFileSystemPermissionContainer.Location = new Point(4, 29);
-            tabPageFileSystemPermissionContainer.Name = "tabPageFileSystemPermissionContainer";
-            tabPageFileSystemPermissionContainer.Padding = new Padding(3);
-            tabPageFileSystemPermissionContainer.Size = new Size(264, 501);
-            tabPageFileSystemPermissionContainer.TabIndex = 3;
-            tabPageFileSystemPermissionContainer.Text = "Container";
-            tabPageFileSystemPermissionContainer.UseVisualStyleBackColor = true;
+            checkedListBoxProcessPermission.CheckOnClick = true;
+            checkedListBoxProcessPermission.FormattingEnabled = true;
+            checkedListBoxProcessPermission.Items.AddRange(new object[] { "Create" });
+            checkedListBoxProcessPermission.Location = new Point(20, 195);
+            checkedListBoxProcessPermission.Name = "checkedListBoxProcessPermission";
+            checkedListBoxProcessPermission.Size = new Size(223, 114);
+            checkedListBoxProcessPermission.TabIndex = 3;
+            // 
+            // labelProcessPermissionProcess
+            // 
+            labelProcessPermissionProcess.AutoSize = true;
+            labelProcessPermissionProcess.Location = new Point(20, 172);
+            labelProcessPermissionProcess.Name = "labelProcessPermissionProcess";
+            labelProcessPermissionProcess.Size = new Size(65, 20);
+            labelProcessPermissionProcess.TabIndex = 4;
+            labelProcessPermissionProcess.Text = "Process";
+            // 
+            // checkedListBoxFileSystemPermission
+            // 
+            checkedListBoxFileSystemPermission.CheckOnClick = true;
+            checkedListBoxFileSystemPermission.FormattingEnabled = true;
+            checkedListBoxFileSystemPermission.Items.AddRange(new object[] { "Read", "Write", "Move" });
+            checkedListBoxFileSystemPermission.Location = new Point(20, 41);
+            checkedListBoxFileSystemPermission.Name = "checkedListBoxFileSystemPermission";
+            checkedListBoxFileSystemPermission.Size = new Size(223, 114);
+            checkedListBoxFileSystemPermission.TabIndex = 0;
+            // 
+            // labelFileSystemPermissionFile
+            // 
+            labelFileSystemPermissionFile.AutoSize = true;
+            labelFileSystemPermissionFile.Location = new Point(20, 18);
+            labelFileSystemPermissionFile.Name = "labelFileSystemPermissionFile";
+            labelFileSystemPermissionFile.Size = new Size(34, 20);
+            labelFileSystemPermissionFile.TabIndex = 2;
+            labelFileSystemPermissionFile.Text = "File";
             // 
             // tabPageProcess
             // 
@@ -652,6 +614,7 @@
             Controls.Add(panelContent);
             Controls.Add(panelTitleBar);
             Controls.Add(panelSideBar);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             Margin = new Padding(4);
             Name = "MainWindow";
             Text = "Sandcess";
@@ -667,13 +630,9 @@
             tabPageFileSystem.ResumeLayout(false);
             panelListViewFileSystemFile.ResumeLayout(false);
             panelFileSystemPermissionSetting.ResumeLayout(false);
-            tabControlFileSystemPermission.ResumeLayout(false);
-            tabPageFileSystemPermissionFile.ResumeLayout(false);
-            tabPageFileSystemPermissionFile.PerformLayout();
-            tabPageFileSystemPermissionProcess.ResumeLayout(false);
-            tabPageFileSystemPermissionProcess.PerformLayout();
-            tabPageFileSystemPermissionNetwork.ResumeLayout(false);
-            tabPageFileSystemPermissionNetwork.PerformLayout();
+            tabControlPermission.ResumeLayout(false);
+            tabPagePermission.ResumeLayout(false);
+            tabPagePermission.PerformLayout();
             tabPageProcess.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -705,24 +664,21 @@
         private Panel panelListViewFileSystemFile;
         private ListView listViewFileSystemFile;
         private Panel panelFileSystemPermissionSetting;
-        private TabControl tabControlFileSystemPermission;
-        private TabPage tabPageFileSystemPermissionFile;
-        private TabPage tabPageFileSystemPermissionProcess;
-        private TabPage tabPageFileSystemPermissionNetwork;
-        private TabPage tabPageFileSystemPermissionContainer;
+        private TabControl tabControlPermission;
+        private TabPage tabPagePermission;
         private FontAwesome.Sharp.IconButton btnFileSystemPermissionApply;
         private ListView listViewProcessProcess;
         private ColumnHeader columnHeaderProcessId;
         private ColumnHeader columnHeaderProcessName;
         private ColumnHeader columnHeaderProcessPath;
         private ColumnHeader columnHeaderProcessContainer;
-        private CheckedListBox checkedListBoxFileSystemPermissionFile;
+        private CheckedListBox checkedListBoxFileSystemPermission;
         private Label labelFileSystemPermissionFile;
         private ColumnHeader columnHeaderFileName;
         private ColumnHeader columnHeaderFilePath;
-        private CheckedListBox checkedListBoxProcessPermissionProcess;
+        private CheckedListBox checkedListBoxProcessPermission;
         private Label labelProcessPermissionProcess;
-        private CheckedListBox checkedListBoxNetworkPermissionNetwork;
+        private CheckedListBox checkedListBoxNetworkPermission;
         private Label labelNetworkPermissionPacket;
     }
 }

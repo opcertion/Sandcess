@@ -13,10 +13,9 @@ QUERY_INFO_PROCESS ZwQueryInformationProcess = NULL;
 
 UNICODE_STRING
 GetProcessPathFromProcessId(
-	_In_ CONST HANDLE process_id
+	_In_ HANDLE process_id
 )
 {
-	SyncFastMutexLock();
 	UNICODE_STRING ret; RtlZeroMemory(&ret, sizeof(ret));
 	
 	if (ZwQueryInformationProcess == NULL)
@@ -63,6 +62,5 @@ GetProcessPathFromProcessId(
 	ret.MaximumLength = sizeof(buffer);
 	
 CLEANUP:
-	SyncFastMutexUnlock();
 	return ret;
 }

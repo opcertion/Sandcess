@@ -3,7 +3,6 @@
 
 
 #include <ntddk.h>
-#include "sync.h"
 
 
 BOOLEAN
@@ -28,7 +27,7 @@ WstringSubstr(
 
 VOID
 UnicodeStringNormalize(
-	_Out_ PUNICODE_STRING str
+	_Inout_ PUNICODE_STRING str
 );
 
 

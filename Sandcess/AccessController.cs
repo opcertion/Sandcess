@@ -18,7 +18,6 @@ namespace Sandcess
             MOVE_FILE,
             /* Process */
             CREATE_PROCESS,
-            KILL_PROCESS,
             /* Network */
             SEND_PACKET,
             RECV_PACKET,
@@ -43,6 +42,7 @@ namespace Sandcess
             __DUMMY19,
             __DUMMY20,
             __DUMMY21,
+            __DUMMY22,
             __RESERVED3,
             __RESERVED4
         };

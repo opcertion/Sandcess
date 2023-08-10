@@ -8,7 +8,7 @@
 
 UNICODE_STRING
 GetProcessPathFromProcessId(
-	_In_ CONST HANDLE process_id
+	_In_ HANDLE process_id
 );
 
 

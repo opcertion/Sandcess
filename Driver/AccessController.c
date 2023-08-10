@@ -24,7 +24,6 @@ AccessControllerSetPermission(
 	_In_ UINT32			permission
 )
 {
-	SyncFastMutexLock();
 	UnicodeStringNormalize(&path);
 
 	PACCESS_INFO trace_node = g_access_info;
@@ -62,7 +61,6 @@ AccessControllerSetPermission(
 	trace_node->permission = permission;
 
 CLEANUP:
-	SyncFastMutexUnlock();
 	return ret;
 }
 
@@ -72,7 +70,6 @@ AccessControllerGetPermission(
 	_In_ UNICODE_STRING path
 )
 {
-	SyncFastMutexLock();
 	UnicodeStringNormalize(&path);
 
 	PACCESS_INFO trace_node = g_access_info;
@@ -101,7 +98,6 @@ AccessControllerGetPermission(
 	ret = trace_node->permission;
 
 CLEANUP:
-	SyncFastMutexUnlock();
 	return ret;
 }
 

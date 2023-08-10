@@ -5,7 +5,6 @@
 #include "MinifltController.h"
 #include "AccessController.h"
 #include "StringUtils.h"
-#include "sync.h"
 
 
 #define MINIFLT_PORT_NAME			L"\\SandcessMinifltPort"

@@ -1,9 +1,6 @@
 #include "pch.h"
 
 
-UNICODE_STRING g_device_name = RTL_CONSTANT_STRING(L"\\Device\\Sandcess");
-UNICODE_STRING g_dos_device_name = RTL_CONSTANT_STRING(L"\\DosDevices\\Sandcess");
-
 PDEVICE_OBJECT g_device_object = NULL;
 
 
@@ -18,6 +15,8 @@ DriverEntry(
 )
 {
 	UNREFERENCED_PARAMETER(registry_path);
+	UNICODE_STRING g_device_name = RTL_CONSTANT_STRING(L"\\Device\\Sandcess");
+	UNICODE_STRING g_dos_device_name = RTL_CONSTANT_STRING(L"\\DosDevices\\Sandcess");
 	NTSTATUS status = STATUS_SUCCESS;
 
 	driver_object->DriverUnload = DriverUnload;
@@ -34,10 +33,6 @@ DriverEntry(
 	CHECK_ERROR(IoCreateDevice, status, CLEANUP);
 	status = IoCreateSymbolicLink(&g_device_name, &g_dos_device_name);
 	CHECK_ERROR(IoCreateSymbolicLink, status, CLEANUP);
-
-	
-	// ==================== [ Sync ] ====================
-	SyncMutexInitialize();
 
 
 	// ==================== [ Access Controller ] ====================
@@ -91,5 +86,4 @@ Cleanup()
 {
 	AccessControllerRelease();
 	ProcessControllerRelease();
-	SyncFastMutexUnlock();
 }

@@ -17,58 +17,57 @@ MinifltUnload(
 }
 
 
-FLT_OPERATION_REGISTRATION g_flt_operations[] = {
-	{
-		IRP_MJ_CREATE,						// Major Function
-		0,									// Flags
-		MinifltCreatePreRoutine,			// Pre Operation
-		MinifltCreatePostRoutine,			// Post Operation
-		NULL
-	},
-	{
-		IRP_MJ_READ,
-		0,
-		MinifltCreatePreRoutine,
-		MinifltCreatePostRoutine,
-		NULL
-	},
-	{
-		IRP_MJ_SET_INFORMATION,
-		0,
-		MinifltCreatePreRoutine,
-		MinifltCreatePostRoutine,
-		NULL
-	},
-	{ IRP_MJ_OPERATION_END }
-};
-FLT_REGISTRATION g_flt_registration = {
-	sizeof(FLT_REGISTRATION),				// Size
-	FLT_REGISTRATION_VERSION,				// Version
-	0,										// Flags
-	NULL,									// Context Registration
-	g_flt_operations,						// Operation Registration
-	MinifltUnload,							// Filter Unload Callback
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-
 NTSTATUS
 MinifltControllerInitialize(
 	_In_ PDRIVER_OBJECT driver_object
 )
 {
+	FLT_OPERATION_REGISTRATION flt_operations[] = {
+		{
+			IRP_MJ_CREATE,						// Major Function
+			0,									// Flags
+			MinifltCreatePreRoutine,			// Pre Operation
+			MinifltCreatePostRoutine,			// Post Operation
+			NULL
+		},
+		{
+			IRP_MJ_READ,
+			0,
+			MinifltCreatePreRoutine,
+			MinifltCreatePostRoutine,
+			NULL
+		},
+		{
+			IRP_MJ_SET_INFORMATION,
+			0,
+			MinifltCreatePreRoutine,
+			MinifltCreatePostRoutine,
+			NULL
+		},
+		{ IRP_MJ_OPERATION_END }
+	};
+	FLT_REGISTRATION flt_registration = {
+		sizeof(FLT_REGISTRATION),				// Size
+		FLT_REGISTRATION_VERSION,				// Version
+		0,										// Flags
+		NULL,									// Context Registration
+		flt_operations,							// Operation Registration
+		MinifltUnload,							// Filter Unload Callback
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL
+	};
+
 	return FltRegisterFilter(
 		driver_object,
-		&g_flt_registration,
+		&flt_registration,
 		&g_flt_handle
 	);
 }
