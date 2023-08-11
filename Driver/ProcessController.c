@@ -9,25 +9,26 @@ CreateProcessNotifyRoutine(
 )
 {
 	UNREFERENCED_PARAMETER(process);
-	UNREFERENCED_PARAMETER(process_id);
 
 	if (create_info == NULL)
+	{
+		AccessControllerRemovePermissionByProcessId(process_id);
 		return;
-
-	UNICODE_STRING parent_process_path; RtlZeroMemory(&parent_process_path, sizeof(parent_process_path));
+	}
 
 	HANDLE parent_process_id = PsGetCurrentProcessId();
 	if (parent_process_id == NULL)
 		return;
-	parent_process_path = GetProcessPathFromProcessId(parent_process_id);
-	if (parent_process_path.Buffer == NULL)
-		return;
-	UINT32 permission = AccessControllerGetPermission(parent_process_path);
+	UINT32 permission = AccessControllerGetPermissionByProcessId(parent_process_id);
 
 	/* Create Process */
 	if (!AccessControllerIsAllowAccess(permission, CREATE_PROCESS))
 	{
 		create_info->CreationStatus = STATUS_UNSUCCESSFUL;
+		
+		UNICODE_STRING parent_process_path = GetProcessPathFromProcessId(parent_process_id);
+		if (parent_process_path.Buffer == NULL)
+			return;
 
 		WCHAR toast_message[MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR)] = { 0 };
 		USHORT backslash_idx = parent_process_path.Length - 1;
@@ -44,20 +45,26 @@ CreateProcessNotifyRoutine(
 			);
 			AgentControllerShowAccessBlockedToast(toast_message);
 		}
+		RtlFreeUnicodeString(&parent_process_path);
 	}
-	RtlFreeUnicodeString(&parent_process_path);
 }
 
 
 NTSTATUS
 ProcessControllerInitialize()
 {
-	return PsSetCreateProcessNotifyRoutineEx(CreateProcessNotifyRoutine, FALSE);
+	return PsSetCreateProcessNotifyRoutineEx(
+		CreateProcessNotifyRoutine,
+		FALSE
+	);
 }
 
 
 VOID
 ProcessControllerRelease()
 {
-	PsSetCreateProcessNotifyRoutineEx(CreateProcessNotifyRoutine, TRUE);
+	PsSetCreateProcessNotifyRoutineEx(
+		CreateProcessNotifyRoutine,
+		TRUE
+	);
 }

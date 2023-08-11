@@ -3,6 +3,7 @@
 
 
 #include <fltKernel.h>
+#include "ProcessUtils.h"
 #include "StringUtils.h"
 #include "FileUtils.h"
 
@@ -48,14 +49,34 @@ typedef enum _ACCESS_TYPE
 
 
 BOOLEAN
-AccessControllerSetPermission(
+AccessControllerSetPermissionByPath(
 	_In_ UNICODE_STRING path,
 	_In_ UINT32			permission
 );
 
+
 UINT32
-AccessControllerGetPermission(
+AccessControllerGetPermissionByPath(
 	_In_ UNICODE_STRING path
+);
+
+
+BOOLEAN
+AccessControllerSetPermissionByProcessId(
+	_In_ HANDLE			process_id,
+	_In_ UINT32			permission
+);
+
+
+UINT32
+AccessControllerGetPermissionByProcessId(
+	_In_ HANDLE			process_id
+);
+
+
+VOID
+AccessControllerRemovePermissionByProcessId(
+	_In_ HANDLE			process_id
 );
 
 

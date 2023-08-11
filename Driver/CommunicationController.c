@@ -41,7 +41,7 @@ MinifltPortDisconnectRoutine(
 #pragma warning( push )
 #pragma warning( disable:6101 )
 NTSTATUS
-MinifltPortMessageRoutine(
+MinifltPortCommunicationRoutine(
 	_In_		PVOID	port_cookie,
 	_In_opt_	PVOID	input_buffer,
 	_In_		ULONG	input_buffer_size,
@@ -59,17 +59,16 @@ MinifltPortMessageRoutine(
 	{
 		req = (PUSER_TO_FLT)input_buffer;
 
-		if (WstringStartswith(req->buffer, L"SetPermission"))
+		if (WideStringStartswith(req->buffer, L"SetPermission"))
 		{
-			CONST SIZE_T req_buffer_length = wcsnlen(req->buffer, MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR));
-
+			SIZE_T req_buffer_length = wcsnlen(req->buffer, MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR));
 			if (req_buffer_length <= 18)
 				goto CLEANUP;
 			
 			UNICODE_STRING path; RtlZeroMemory(&path, sizeof(path));
 			UINT32 permission = 0u;
 
-			path.Buffer = WstringSubstr(req->buffer, 14, req_buffer_length - 3);
+			path.Buffer = WideStringSubstr(req->buffer, 14, req_buffer_length - 3);
 			if (path.Buffer == NULL)
 				goto CLEANUP;
 
@@ -79,7 +78,7 @@ MinifltPortMessageRoutine(
 				(UINT32)((req->buffer[req_buffer_length - 2]) << 16) |
 				(UINT32)(req->buffer[req_buffer_length - 1])
 			);
-			AccessControllerSetPermission(path, permission);
+			AccessControllerSetPermissionByPath(path, permission);
 			RtlFreeUnicodeString(&path);
 		}
 	}
@@ -126,7 +125,7 @@ CommunicationControllerInitialize()
 		NULL,
 		MinifltPortConnectRoutine,
 		MinifltPortDisconnectRoutine,
-		MinifltPortMessageRoutine,
+		MinifltPortCommunicationRoutine,
 		2
 	);
 	return status;

@@ -6,19 +6,19 @@
 
 
 BOOLEAN
-WstringEqual(
+WideStringEqual(
 	_In_ PWCHAR wstr1,
 	_In_ PWCHAR wstr2
 );
 
 BOOLEAN
-WstringStartswith(
+WideStringStartswith(
 	_In_ PWCHAR wstr1,
 	_In_ PWCHAR wstr2
 );
 
 PWCHAR
-WstringSubstr(
+WideStringSubstr(
 	_In_ PWCHAR wstr,
 	_In_ SIZE_T idx1,
 	_In_ SIZE_T idx2

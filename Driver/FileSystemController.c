@@ -61,15 +61,8 @@ MinifltCreatePreRoutine(
 	HANDLE process_id = PsGetCurrentProcessId();
 	if (process_id == NULL)
 		goto CLEANUP;
-	process_path = GetProcessPathFromProcessId(process_id);
-	if (process_path.Buffer == NULL)
-	{
-		ret_callback_status = FLT_PREOP_SUCCESS_NO_CALLBACK;
-		goto CLEANUP;
-	}
 
-
-	UINT32 permission = AccessControllerGetPermission(process_path);
+	UINT32 permission = AccessControllerGetPermissionByProcessId(process_id);
 	if (permission == (UINT32)0xffffffff)
 		goto CLEANUP;
 

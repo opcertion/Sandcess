@@ -2,13 +2,13 @@
 
 
 BOOLEAN
-WstringEqual(
+WideStringEqual(
 	_In_ PWCHAR wstr1,
 	_In_ PWCHAR wstr2
 )
 {
-	CONST SIZE_T wstr1_length = wcslen(wstr1);
-	CONST SIZE_T wstr2_length = wcslen(wstr2);
+	SIZE_T wstr1_length = wcslen(wstr1);
+	SIZE_T wstr2_length = wcslen(wstr2);
 	
 	if (wstr1_length != wstr2_length)
 		return FALSE;
@@ -23,13 +23,13 @@ WstringEqual(
 
 
 BOOLEAN
-WstringStartswith(
+WideStringStartswith(
 	_In_ PWCHAR wstr1,
 	_In_ PWCHAR wstr2
 )
 {
-	CONST SIZE_T wstr1_length = wcslen(wstr1);
-	CONST SIZE_T wstr2_length = wcslen(wstr2);
+	SIZE_T wstr1_length = wcslen(wstr1);
+	SIZE_T wstr2_length = wcslen(wstr2);
 
 	if (wstr1_length < wstr2_length)
 		return FALSE;
@@ -44,7 +44,7 @@ WstringStartswith(
 
 
 PWCHAR
-WstringSubstr(
+WideStringSubstr(
 	_In_ PWCHAR wstr,
 	_In_ SIZE_T idx1,
 	_In_ SIZE_T idx2
