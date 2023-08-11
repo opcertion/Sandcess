@@ -101,6 +101,7 @@
     <ClCompile Include="AccessController.c" />
     <ClCompile Include="AgentController.c" />
     <ClCompile Include="CommunicationController.c" />
+    <ClCompile Include="ContainerController.c" />
     <ClCompile Include="FileSystemController.c" />
     <ClCompile Include="FileUtils.c" />
     <ClCompile Include="main.c" />
@@ -114,6 +115,7 @@
     <ClInclude Include="AccessController.h" />
     <ClInclude Include="AgentController.h" />
     <ClInclude Include="CommunicationController.h" />
+    <ClInclude Include="ContainerController.h" />
     <ClInclude Include="FileSystemController.h" />
     <ClInclude Include="FileUtils.h" />
     <ClInclude Include="MinifltController.h" />

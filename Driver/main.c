@@ -75,7 +75,7 @@ DriverUnload(
 {
 	UNREFERENCED_PARAMETER(driver_object);
 
-	if (g_device_object != NULL)
+	if (g_device_object)
 		IoDeleteDevice(g_device_object);
 	Cleanup();
 }

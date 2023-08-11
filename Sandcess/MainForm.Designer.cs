@@ -38,10 +38,10 @@
             tabPageFileSystem = new TabPage();
             panelListViewFileSystemFile = new Panel();
             listViewFileSystemFile = new ListView();
-            columnHeaderFileName = new ColumnHeader();
-            columnHeaderFilePath = new ColumnHeader();
+            columnHeaderFileSystemFileFileName = new ColumnHeader();
+            columnHeaderFileSystemFileFilePath = new ColumnHeader();
             panelFileSystemPermissionSetting = new Panel();
-            btnFileSystemPermissionApply = new FontAwesome.Sharp.IconButton();
+            btnFileSystemApply = new FontAwesome.Sharp.IconButton();
             tabControlPermission = new TabControl();
             tabPagePermission = new TabPage();
             checkedListBoxNetworkPermission = new CheckedListBox();
@@ -52,11 +52,25 @@
             labelFileSystemPermissionFile = new Label();
             tabPageProcess = new TabPage();
             listViewProcessProcess = new ListView();
-            columnHeaderProcessId = new ColumnHeader();
-            columnHeaderProcessName = new ColumnHeader();
-            columnHeaderProcessPath = new ColumnHeader();
-            columnHeaderProcessContainer = new ColumnHeader();
+            columnHeaderProcessProcessProcessId = new ColumnHeader();
+            columnHeaderProcessProcessProcessName = new ColumnHeader();
+            columnHeaderProcessProcessProcessPath = new ColumnHeader();
             tabPageContainer = new TabPage();
+            panelContainerContainer = new Panel();
+            listViewContainerContainer = new ListView();
+            columnHeaderContainerContainerContainer = new ColumnHeader();
+            panelContainerContainerControlMenu = new Panel();
+            btnContainerDeleteContainer = new FontAwesome.Sharp.IconButton();
+            btnContainerAddContainer = new FontAwesome.Sharp.IconButton();
+            panelContainerSetupMenu = new Panel();
+            panelContainerTargetFile = new Panel();
+            panelContainerAccessibleFolder = new Panel();
+            listViewContainerAccessibleFolder = new ListView();
+            columnHeaderContainerAccessibleFolderAccessibleFolder = new ColumnHeader();
+            panelContainerAccessibleFolderControlMenu = new Panel();
+            btnContainerDeleteAccessibleFolder = new FontAwesome.Sharp.IconButton();
+            btnContainerApply = new Button();
+            btnContainerAddAccessibleFolder = new FontAwesome.Sharp.IconButton();
             tabPageEventLog = new TabPage();
             panelSideBar.SuspendLayout();
             panelSideMenu.SuspendLayout();
@@ -70,6 +84,12 @@
             tabControlPermission.SuspendLayout();
             tabPagePermission.SuspendLayout();
             tabPageProcess.SuspendLayout();
+            tabPageContainer.SuspendLayout();
+            panelContainerContainer.SuspendLayout();
+            panelContainerContainerControlMenu.SuspendLayout();
+            panelContainerSetupMenu.SuspendLayout();
+            panelContainerAccessibleFolder.SuspendLayout();
+            panelContainerAccessibleFolderControlMenu.SuspendLayout();
             SuspendLayout();
             // 
             // panelSideBar
@@ -407,7 +427,7 @@
             // 
             // listViewFileSystemFile
             // 
-            listViewFileSystemFile.Columns.AddRange(new ColumnHeader[] { columnHeaderFileName, columnHeaderFilePath });
+            listViewFileSystemFile.Columns.AddRange(new ColumnHeader[] { columnHeaderFileSystemFileFileName, columnHeaderFileSystemFileFilePath });
             listViewFileSystemFile.Dock = DockStyle.Fill;
             listViewFileSystemFile.FullRowSelect = true;
             listViewFileSystemFile.Location = new Point(0, 0);
@@ -419,19 +439,19 @@
             listViewFileSystemFile.View = View.Details;
             listViewFileSystemFile.SelectedIndexChanged += listViewFileSystemFile_SelectedIndexChanged;
             // 
-            // columnHeaderFileName
+            // columnHeaderFileSystemFileFileName
             // 
-            columnHeaderFileName.Text = "File Name";
-            columnHeaderFileName.Width = 200;
+            columnHeaderFileSystemFileFileName.Text = "File Name";
+            columnHeaderFileSystemFileFileName.Width = 200;
             // 
-            // columnHeaderFilePath
+            // columnHeaderFileSystemFileFilePath
             // 
-            columnHeaderFilePath.Text = "File Path";
-            columnHeaderFilePath.Width = 450;
+            columnHeaderFileSystemFileFilePath.Text = "File Path";
+            columnHeaderFileSystemFileFilePath.Width = 480;
             // 
             // panelFileSystemPermissionSetting
             // 
-            panelFileSystemPermissionSetting.Controls.Add(btnFileSystemPermissionApply);
+            panelFileSystemPermissionSetting.Controls.Add(btnFileSystemApply);
             panelFileSystemPermissionSetting.Controls.Add(tabControlPermission);
             panelFileSystemPermissionSetting.Dock = DockStyle.Right;
             panelFileSystemPermissionSetting.Location = new Point(706, 4);
@@ -439,19 +459,19 @@
             panelFileSystemPermissionSetting.Size = new Size(272, 534);
             panelFileSystemPermissionSetting.TabIndex = 0;
             // 
-            // btnFileSystemPermissionApply
+            // btnFileSystemApply
             // 
-            btnFileSystemPermissionApply.Dock = DockStyle.Bottom;
-            btnFileSystemPermissionApply.IconChar = FontAwesome.Sharp.IconChar.None;
-            btnFileSystemPermissionApply.IconColor = Color.Black;
-            btnFileSystemPermissionApply.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnFileSystemPermissionApply.Location = new Point(0, 505);
-            btnFileSystemPermissionApply.Name = "btnFileSystemPermissionApply";
-            btnFileSystemPermissionApply.Size = new Size(272, 29);
-            btnFileSystemPermissionApply.TabIndex = 1;
-            btnFileSystemPermissionApply.Text = "Permission Apply";
-            btnFileSystemPermissionApply.UseVisualStyleBackColor = true;
-            btnFileSystemPermissionApply.Click += btnFileSystemPermissionApply_Click;
+            btnFileSystemApply.Dock = DockStyle.Bottom;
+            btnFileSystemApply.IconChar = FontAwesome.Sharp.IconChar.None;
+            btnFileSystemApply.IconColor = Color.Black;
+            btnFileSystemApply.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnFileSystemApply.Location = new Point(0, 505);
+            btnFileSystemApply.Name = "btnFileSystemApply";
+            btnFileSystemApply.Size = new Size(272, 29);
+            btnFileSystemApply.TabIndex = 1;
+            btnFileSystemApply.Text = "Apply";
+            btnFileSystemApply.UseVisualStyleBackColor = true;
+            btnFileSystemApply.Click += btnFileSystemPermissionApply_Click;
             // 
             // tabControlPermission
             // 
@@ -551,7 +571,7 @@
             // 
             // listViewProcessProcess
             // 
-            listViewProcessProcess.Columns.AddRange(new ColumnHeader[] { columnHeaderProcessId, columnHeaderProcessName, columnHeaderProcessPath, columnHeaderProcessContainer });
+            listViewProcessProcess.Columns.AddRange(new ColumnHeader[] { columnHeaderProcessProcessProcessId, columnHeaderProcessProcessProcessName, columnHeaderProcessProcessProcessPath });
             listViewProcessProcess.Dock = DockStyle.Fill;
             listViewProcessProcess.FullRowSelect = true;
             listViewProcessProcess.Location = new Point(4, 4);
@@ -563,28 +583,25 @@
             listViewProcessProcess.View = View.Details;
             listViewProcessProcess.DoubleClick += listViewProcessProcess_DoubleClick;
             // 
-            // columnHeaderProcessId
+            // columnHeaderProcessProcessProcessId
             // 
-            columnHeaderProcessId.Text = "Process ID";
-            columnHeaderProcessId.Width = 90;
+            columnHeaderProcessProcessProcessId.Text = "Process ID";
+            columnHeaderProcessProcessProcessId.Width = 90;
             // 
-            // columnHeaderProcessName
+            // columnHeaderProcessProcessProcessName
             // 
-            columnHeaderProcessName.Text = "Process Name";
-            columnHeaderProcessName.Width = 350;
+            columnHeaderProcessProcessProcessName.Text = "Process Name";
+            columnHeaderProcessProcessProcessName.Width = 350;
             // 
-            // columnHeaderProcessPath
+            // columnHeaderProcessProcessProcessPath
             // 
-            columnHeaderProcessPath.Text = "Process Path";
-            columnHeaderProcessPath.Width = 350;
-            // 
-            // columnHeaderProcessContainer
-            // 
-            columnHeaderProcessContainer.Text = "Container";
-            columnHeaderProcessContainer.Width = 200;
+            columnHeaderProcessProcessProcessPath.Text = "Process Path";
+            columnHeaderProcessProcessProcessPath.Width = 520;
             // 
             // tabPageContainer
             // 
+            tabPageContainer.Controls.Add(panelContainerContainer);
+            tabPageContainer.Controls.Add(panelContainerSetupMenu);
             tabPageContainer.Location = new Point(4, 24);
             tabPageContainer.Margin = new Padding(4);
             tabPageContainer.Name = "tabPageContainer";
@@ -593,6 +610,201 @@
             tabPageContainer.TabIndex = 3;
             tabPageContainer.Text = "Container";
             tabPageContainer.UseVisualStyleBackColor = true;
+            // 
+            // panelContainerContainer
+            // 
+            panelContainerContainer.Controls.Add(listViewContainerContainer);
+            panelContainerContainer.Controls.Add(panelContainerContainerControlMenu);
+            panelContainerContainer.Dock = DockStyle.Fill;
+            panelContainerContainer.Location = new Point(4, 4);
+            panelContainerContainer.Name = "panelContainerContainer";
+            panelContainerContainer.Size = new Size(234, 534);
+            panelContainerContainer.TabIndex = 1;
+            // 
+            // listViewContainerContainer
+            // 
+            listViewContainerContainer.Columns.AddRange(new ColumnHeader[] { columnHeaderContainerContainerContainer });
+            listViewContainerContainer.Dock = DockStyle.Fill;
+            listViewContainerContainer.FullRowSelect = true;
+            listViewContainerContainer.Location = new Point(0, 0);
+            listViewContainerContainer.MultiSelect = false;
+            listViewContainerContainer.Name = "listViewContainerContainer";
+            listViewContainerContainer.Size = new Size(234, 504);
+            listViewContainerContainer.TabIndex = 4;
+            listViewContainerContainer.UseCompatibleStateImageBehavior = false;
+            listViewContainerContainer.View = View.Details;
+            listViewContainerContainer.SelectedIndexChanged += listViewContainerContainer_SelectedIndexChanged;
+            // 
+            // columnHeaderContainerContainerContainer
+            // 
+            columnHeaderContainerContainerContainer.Text = "Container";
+            columnHeaderContainerContainerContainer.Width = 220;
+            // 
+            // panelContainerContainerControlMenu
+            // 
+            panelContainerContainerControlMenu.Controls.Add(btnContainerDeleteContainer);
+            panelContainerContainerControlMenu.Controls.Add(btnContainerAddContainer);
+            panelContainerContainerControlMenu.Dock = DockStyle.Bottom;
+            panelContainerContainerControlMenu.Location = new Point(0, 504);
+            panelContainerContainerControlMenu.Name = "panelContainerContainerControlMenu";
+            panelContainerContainerControlMenu.Size = new Size(234, 30);
+            panelContainerContainerControlMenu.TabIndex = 2;
+            // 
+            // btnContainerDeleteContainer
+            // 
+            btnContainerDeleteContainer.BackColor = Color.Transparent;
+            btnContainerDeleteContainer.Dock = DockStyle.Left;
+            btnContainerDeleteContainer.FlatAppearance.BorderSize = 0;
+            btnContainerDeleteContainer.FlatStyle = FlatStyle.Flat;
+            btnContainerDeleteContainer.Font = new Font("Microsoft YaHei", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            btnContainerDeleteContainer.ForeColor = Color.Transparent;
+            btnContainerDeleteContainer.IconChar = FontAwesome.Sharp.IconChar.TrashAlt;
+            btnContainerDeleteContainer.IconColor = SystemColors.ControlDarkDark;
+            btnContainerDeleteContainer.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnContainerDeleteContainer.IconSize = 30;
+            btnContainerDeleteContainer.Location = new Point(28, 0);
+            btnContainerDeleteContainer.Margin = new Padding(4);
+            btnContainerDeleteContainer.Name = "btnContainerDeleteContainer";
+            btnContainerDeleteContainer.Size = new Size(28, 30);
+            btnContainerDeleteContainer.TabIndex = 7;
+            btnContainerDeleteContainer.Tag = "";
+            btnContainerDeleteContainer.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnContainerDeleteContainer.UseVisualStyleBackColor = false;
+            btnContainerDeleteContainer.Click += btnContainerDeleteContainer_Click;
+            // 
+            // btnContainerAddContainer
+            // 
+            btnContainerAddContainer.BackColor = Color.Transparent;
+            btnContainerAddContainer.Dock = DockStyle.Left;
+            btnContainerAddContainer.FlatAppearance.BorderSize = 0;
+            btnContainerAddContainer.FlatStyle = FlatStyle.Flat;
+            btnContainerAddContainer.Font = new Font("Microsoft YaHei", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            btnContainerAddContainer.ForeColor = Color.Transparent;
+            btnContainerAddContainer.IconChar = FontAwesome.Sharp.IconChar.PlusSquare;
+            btnContainerAddContainer.IconColor = SystemColors.ControlDarkDark;
+            btnContainerAddContainer.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnContainerAddContainer.IconSize = 30;
+            btnContainerAddContainer.Location = new Point(0, 0);
+            btnContainerAddContainer.Margin = new Padding(4);
+            btnContainerAddContainer.Name = "btnContainerAddContainer";
+            btnContainerAddContainer.Size = new Size(28, 30);
+            btnContainerAddContainer.TabIndex = 6;
+            btnContainerAddContainer.Tag = "";
+            btnContainerAddContainer.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnContainerAddContainer.UseVisualStyleBackColor = false;
+            btnContainerAddContainer.Click += btnContainerAddContainer_Click;
+            // 
+            // panelContainerSetupMenu
+            // 
+            panelContainerSetupMenu.Controls.Add(panelContainerTargetFile);
+            panelContainerSetupMenu.Controls.Add(panelContainerAccessibleFolder);
+            panelContainerSetupMenu.Dock = DockStyle.Right;
+            panelContainerSetupMenu.Location = new Point(238, 4);
+            panelContainerSetupMenu.Name = "panelContainerSetupMenu";
+            panelContainerSetupMenu.Size = new Size(740, 534);
+            panelContainerSetupMenu.TabIndex = 0;
+            // 
+            // panelContainerTargetFile
+            // 
+            panelContainerTargetFile.Dock = DockStyle.Fill;
+            panelContainerTargetFile.Location = new Point(0, 0);
+            panelContainerTargetFile.Name = "panelContainerTargetFile";
+            panelContainerTargetFile.Size = new Size(740, 294);
+            panelContainerTargetFile.TabIndex = 1;
+            // 
+            // panelContainerAccessibleFolder
+            // 
+            panelContainerAccessibleFolder.Controls.Add(listViewContainerAccessibleFolder);
+            panelContainerAccessibleFolder.Controls.Add(panelContainerAccessibleFolderControlMenu);
+            panelContainerAccessibleFolder.Dock = DockStyle.Bottom;
+            panelContainerAccessibleFolder.Location = new Point(0, 294);
+            panelContainerAccessibleFolder.Name = "panelContainerAccessibleFolder";
+            panelContainerAccessibleFolder.Size = new Size(740, 240);
+            panelContainerAccessibleFolder.TabIndex = 0;
+            // 
+            // listViewContainerAccessibleFolder
+            // 
+            listViewContainerAccessibleFolder.Columns.AddRange(new ColumnHeader[] { columnHeaderContainerAccessibleFolderAccessibleFolder });
+            listViewContainerAccessibleFolder.Dock = DockStyle.Fill;
+            listViewContainerAccessibleFolder.FullRowSelect = true;
+            listViewContainerAccessibleFolder.Location = new Point(0, 0);
+            listViewContainerAccessibleFolder.MultiSelect = false;
+            listViewContainerAccessibleFolder.Name = "listViewContainerAccessibleFolder";
+            listViewContainerAccessibleFolder.Size = new Size(740, 210);
+            listViewContainerAccessibleFolder.TabIndex = 3;
+            listViewContainerAccessibleFolder.UseCompatibleStateImageBehavior = false;
+            listViewContainerAccessibleFolder.View = View.Details;
+            // 
+            // columnHeaderContainerAccessibleFolderAccessibleFolder
+            // 
+            columnHeaderContainerAccessibleFolderAccessibleFolder.Text = "Accessible Folder";
+            columnHeaderContainerAccessibleFolderAccessibleFolder.Width = 720;
+            // 
+            // panelContainerAccessibleFolderControlMenu
+            // 
+            panelContainerAccessibleFolderControlMenu.Controls.Add(btnContainerDeleteAccessibleFolder);
+            panelContainerAccessibleFolderControlMenu.Controls.Add(btnContainerApply);
+            panelContainerAccessibleFolderControlMenu.Controls.Add(btnContainerAddAccessibleFolder);
+            panelContainerAccessibleFolderControlMenu.Dock = DockStyle.Bottom;
+            panelContainerAccessibleFolderControlMenu.Location = new Point(0, 210);
+            panelContainerAccessibleFolderControlMenu.Name = "panelContainerAccessibleFolderControlMenu";
+            panelContainerAccessibleFolderControlMenu.Size = new Size(740, 30);
+            panelContainerAccessibleFolderControlMenu.TabIndex = 0;
+            // 
+            // btnContainerDeleteAccessibleFolder
+            // 
+            btnContainerDeleteAccessibleFolder.BackColor = Color.Transparent;
+            btnContainerDeleteAccessibleFolder.Dock = DockStyle.Left;
+            btnContainerDeleteAccessibleFolder.FlatAppearance.BorderSize = 0;
+            btnContainerDeleteAccessibleFolder.FlatStyle = FlatStyle.Flat;
+            btnContainerDeleteAccessibleFolder.Font = new Font("Microsoft YaHei", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            btnContainerDeleteAccessibleFolder.ForeColor = Color.Transparent;
+            btnContainerDeleteAccessibleFolder.IconChar = FontAwesome.Sharp.IconChar.TrashAlt;
+            btnContainerDeleteAccessibleFolder.IconColor = SystemColors.ControlDarkDark;
+            btnContainerDeleteAccessibleFolder.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnContainerDeleteAccessibleFolder.IconSize = 30;
+            btnContainerDeleteAccessibleFolder.Location = new Point(28, 0);
+            btnContainerDeleteAccessibleFolder.Margin = new Padding(4);
+            btnContainerDeleteAccessibleFolder.Name = "btnContainerDeleteAccessibleFolder";
+            btnContainerDeleteAccessibleFolder.Size = new Size(28, 30);
+            btnContainerDeleteAccessibleFolder.TabIndex = 6;
+            btnContainerDeleteAccessibleFolder.Tag = "";
+            btnContainerDeleteAccessibleFolder.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnContainerDeleteAccessibleFolder.UseVisualStyleBackColor = false;
+            btnContainerDeleteAccessibleFolder.Click += btnContainerDeleteAccessibleFolder_Click;
+            // 
+            // btnContainerApply
+            // 
+            btnContainerApply.Dock = DockStyle.Right;
+            btnContainerApply.Location = new Point(531, 0);
+            btnContainerApply.Name = "btnContainerApply";
+            btnContainerApply.Size = new Size(209, 30);
+            btnContainerApply.TabIndex = 7;
+            btnContainerApply.Text = "Apply";
+            btnContainerApply.UseVisualStyleBackColor = true;
+            btnContainerApply.Click += btnContainerApply_Click;
+            // 
+            // btnContainerAddAccessibleFolder
+            // 
+            btnContainerAddAccessibleFolder.BackColor = Color.Transparent;
+            btnContainerAddAccessibleFolder.Dock = DockStyle.Left;
+            btnContainerAddAccessibleFolder.FlatAppearance.BorderSize = 0;
+            btnContainerAddAccessibleFolder.FlatStyle = FlatStyle.Flat;
+            btnContainerAddAccessibleFolder.Font = new Font("Microsoft YaHei", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            btnContainerAddAccessibleFolder.ForeColor = Color.Transparent;
+            btnContainerAddAccessibleFolder.IconChar = FontAwesome.Sharp.IconChar.PlusSquare;
+            btnContainerAddAccessibleFolder.IconColor = SystemColors.ControlDarkDark;
+            btnContainerAddAccessibleFolder.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnContainerAddAccessibleFolder.IconSize = 30;
+            btnContainerAddAccessibleFolder.Location = new Point(0, 0);
+            btnContainerAddAccessibleFolder.Margin = new Padding(4);
+            btnContainerAddAccessibleFolder.Name = "btnContainerAddAccessibleFolder";
+            btnContainerAddAccessibleFolder.Size = new Size(28, 30);
+            btnContainerAddAccessibleFolder.TabIndex = 5;
+            btnContainerAddAccessibleFolder.Tag = "";
+            btnContainerAddAccessibleFolder.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnContainerAddAccessibleFolder.UseVisualStyleBackColor = false;
+            btnContainerAddAccessibleFolder.Click += btnContainerAddAccessibleFolder_Click;
             // 
             // tabPageEventLog
             // 
@@ -618,7 +830,6 @@
             Margin = new Padding(4);
             Name = "MainWindow";
             Text = "Sandcess";
-            Resize += Form1_Resize;
             panelSideBar.ResumeLayout(false);
             panelSideMenu.ResumeLayout(false);
             panelSideMenuHeader.ResumeLayout(false);
@@ -634,6 +845,12 @@
             tabPagePermission.ResumeLayout(false);
             tabPagePermission.PerformLayout();
             tabPageProcess.ResumeLayout(false);
+            tabPageContainer.ResumeLayout(false);
+            panelContainerContainer.ResumeLayout(false);
+            panelContainerContainerControlMenu.ResumeLayout(false);
+            panelContainerSetupMenu.ResumeLayout(false);
+            panelContainerAccessibleFolder.ResumeLayout(false);
+            panelContainerAccessibleFolderControlMenu.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -666,19 +883,33 @@
         private Panel panelFileSystemPermissionSetting;
         private TabControl tabControlPermission;
         private TabPage tabPagePermission;
-        private FontAwesome.Sharp.IconButton btnFileSystemPermissionApply;
+        private FontAwesome.Sharp.IconButton btnFileSystemApply;
         private ListView listViewProcessProcess;
-        private ColumnHeader columnHeaderProcessId;
-        private ColumnHeader columnHeaderProcessName;
-        private ColumnHeader columnHeaderProcessPath;
-        private ColumnHeader columnHeaderProcessContainer;
+        private ColumnHeader columnHeaderProcessProcessProcessId;
+        private ColumnHeader columnHeaderProcessProcessProcessName;
+        private ColumnHeader columnHeaderProcessProcessProcessPath;
         private CheckedListBox checkedListBoxFileSystemPermission;
         private Label labelFileSystemPermissionFile;
-        private ColumnHeader columnHeaderFileName;
-        private ColumnHeader columnHeaderFilePath;
+        private ColumnHeader columnHeaderFileSystemFileFileName;
+        private ColumnHeader columnHeaderFileSystemFileFilePath;
         private CheckedListBox checkedListBoxProcessPermission;
         private Label labelProcessPermissionProcess;
         private CheckedListBox checkedListBoxNetworkPermission;
         private Label labelNetworkPermissionPacket;
+        private Panel panelContainerContainer;
+        private Panel panelContainerSetupMenu;
+        private Panel panelContainerTargetFile;
+        private Panel panelContainerAccessibleFolder;
+        private FontAwesome.Sharp.IconButton btnContainerAddAccessibleFolder;
+        private ListView listViewContainerAccessibleFolder;
+        private ColumnHeader columnHeaderContainerAccessibleFolderAccessibleFolder;
+        private Panel panelContainerAccessibleFolderControlMenu;
+        private Button btnContainerApply;
+        private FontAwesome.Sharp.IconButton btnContainerDeleteAccessibleFolder;
+        private Panel panelContainerContainerControlMenu;
+        private ListView listViewContainerContainer;
+        private ColumnHeader columnHeaderContainerContainerContainer;
+        private FontAwesome.Sharp.IconButton btnContainerDeleteContainer;
+        private FontAwesome.Sharp.IconButton btnContainerAddContainer;
     }
 }

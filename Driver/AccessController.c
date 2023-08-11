@@ -27,7 +27,6 @@ typedef struct _PROCESS_ACCESS_INFO
 
 PACCESS_INFO g_access_info = NULL;
 PPROCESS_ACCESS_INFO g_process_access_info = NULL;
-FILE g_access_info_file;
 
 
 BOOLEAN
@@ -43,7 +42,7 @@ AccessControllerSetPermissionByPath(
 
 	for (USHORT idx = 8; idx < path.Length / sizeof(WCHAR); idx++)
 	{
-		UCHAR ch1 = (UCHAR)((path.Buffer[idx] & 0xff00) >> 8);
+		UCHAR ch1 = (UCHAR)(path.Buffer[idx] >> 8);
 		UCHAR ch2 = (UCHAR)(path.Buffer[idx] & 0x00ff);
 
 		if (trace_node->next_nodes[ch1] == NULL)
@@ -90,7 +89,7 @@ AccessControllerGetPermissionByPath(
 
 	for (USHORT idx = 8; idx < path.Length / sizeof(WCHAR); idx++)
 	{
-		UCHAR ch1 = (UCHAR)((path.Buffer[idx] & 0xff00) >> 8);
+		UCHAR ch1 = (UCHAR)(path.Buffer[idx] >> 8);
 		UCHAR ch2 = (UCHAR)(path.Buffer[idx] & 0x00ff);
 
 		if (trace_node->next_nodes[ch1] == NULL)
@@ -242,13 +241,6 @@ AccessControllerIsAllowAccess(
 NTSTATUS
 AccessControllerInitialize()
 {
-	RtlZeroMemory(&g_access_info_file, sizeof(g_access_info_file));
-	UNICODE_STRING access_info_file_path = RTL_CONSTANT_STRING(L"\\??\\C:\\Sandcess\\ACCESS_INFO.DAT");
-
-	g_access_info_file = OpenFile(access_info_file_path);
-	if (!NT_SUCCESS(g_access_info_file.status))
-		g_access_info_file = CreateFile(access_info_file_path);
-
 	g_access_info = (PACCESS_INFO)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(ACCESS_INFO), 'AC');
 	if (g_access_info == NULL)
 	{
@@ -262,14 +254,12 @@ AccessControllerInitialize()
 		KdPrint(("[Sandcess] -> [AccessController_AccessControllerInitialize] ExAllocatePool2 return null."));
 		return STATUS_UNSUCCESSFUL;
 	}
-
-	return g_access_info_file.status;
+	return STATUS_SUCCESS;
 }
 
 
 VOID
 AccessControllerRelease()
 {
-	if (g_access_info_file.handle)
-		ZwClose(g_access_info_file.handle);
+	// release g_access_info, g_process_access_info
 }

@@ -46,17 +46,22 @@ namespace Sandcess
             __RESERVED3,
             __RESERVED4
         };
+        
+        public static Dictionary<string, uint> accessInfo = new Dictionary<string, uint>();
 
         public static bool SetPermission(string path, uint permission)
         {
             permission |= 0xc0000003;
             string reqData = (
                 "SetPermission " +
-                path + " " +
+                FileUtils.DosPathToNtPath(path) + " " +
                 Convert.ToChar((ushort)(permission >> 16)) +
                 Convert.ToChar((ushort)(permission & 0xffff))
             );
-            return (AgentController.SendDataToDriver(reqData) == "0");
+            bool ret = (AgentController.SendDataToDriver(reqData) == "0");
+            if (ret)
+                accessInfo[path] = permission;
+            return ret;
         }
     }
 }

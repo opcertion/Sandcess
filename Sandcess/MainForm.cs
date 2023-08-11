@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Collections;
+using Microsoft.VisualBasic;
+using System.Windows.Forms;
 
 namespace Sandcess
 {
@@ -61,21 +63,6 @@ namespace Sandcess
         }
 
 
-        private void Form1_Resize(object sender, EventArgs e)
-        {
-            switch (this.WindowState)
-            {
-                case FormWindowState.Maximized:
-                    this.Padding = new Padding(0, 10, 10, 0);
-                    break;
-                case FormWindowState.Normal:
-                    if (this.Padding.Top != 1)
-                        this.Padding = new Padding(1);
-                    break;
-            }
-        }
-
-
         private void btnMinimize_Click(object sender, EventArgs e) { this.WindowState = FormWindowState.Minimized; }
 
         private void btnMaximize_Click(object sender, EventArgs e) { this.WindowState ^= FormWindowState.Maximized; }
@@ -122,7 +109,6 @@ namespace Sandcess
                 }
             }
 
-            path = FileUtils.DosPathToNtPath(path);
             if (!AccessController.SetPermission(path, permission))
             {
                 MessageBox.Show(
@@ -144,6 +130,23 @@ namespace Sandcess
                 return;
             }
             labelTitle.Text = listViewFileSystemFile.SelectedItems[0].Text;
+
+            string path = listViewFileSystemFile.SelectedItems[0].SubItems[1].Text;
+            uint permission = (AccessController.accessInfo.ContainsKey(path) ? AccessController.accessInfo[path] : 0u);
+            int currentAccessType = 2/* reserved bit */;
+
+            foreach (CheckedListBox permissionCheckedBox in new CheckedListBox[]{
+                checkedListBoxFileSystemPermission,
+                checkedListBoxProcessPermission,
+                checkedListBoxNetworkPermission
+            })
+            {
+                for (int idx = 0; idx < permissionCheckedBox.Items.Count; idx++)
+                {
+                    permissionCheckedBox.SetItemChecked(idx, (((permission >> currentAccessType) & 1) == 1));
+                    currentAccessType += 1;
+                }
+            }
         }
 
         private void listViewProcessProcess_DoubleClick(object sender, EventArgs e)
@@ -159,6 +162,89 @@ namespace Sandcess
                 listViewFileSystemFile.Items.Insert(0, listViewItem);
                 listViewFileSystemFile.Items[0].Selected = true;
             }
+        }
+
+        private void listViewContainerContainer_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listViewContainerContainer.SelectedItems.Count == 0)
+            {
+                labelTitle.Text = "Container";
+                return;
+            }
+            labelTitle.Text = listViewContainerContainer.SelectedItems[0].Text;
+        }
+
+        private void btnContainerAddContainer_Click(object sender, EventArgs e)
+        {
+            string containerName = Interaction.InputBox(
+                "Please enter the container name.",
+                "Container Name",
+                "Container-1",
+                (Screen.PrimaryScreen.Bounds.Width / 2) - 250,
+                (Screen.PrimaryScreen.Bounds.Height / 2) - 100
+            );
+            if (!string.IsNullOrWhiteSpace(containerName))
+            {
+                if (ContainerController.containerInfo.ContainsKey(containerName))
+                {
+                    MessageBox.Show(
+                        "Container name already exists.",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                    return;
+                }
+                ContainerController.containerInfo[containerName] = new ContainerController.CONTAINER_INFO();
+                ListViewItem listViewItem = new ListViewItem(containerName);
+                listViewContainerContainer.Items.Insert(0, listViewItem);
+            }
+        }
+
+        private void btnContainerDeleteContainer_Click(object sender, EventArgs e)
+        {
+            if (listViewContainerContainer.SelectedItems.Count == 0)
+                return;
+            listViewContainerContainer.Items.RemoveAt(
+                listViewContainerContainer.SelectedItems[0].Index
+            );
+        }
+
+        private void btnContainerAddAccessibleFolder_Click(object sender, EventArgs e)
+        {
+            if (listViewContainerContainer.SelectedItems.Count == 0)
+            {
+                MessageBox.Show(
+                    "No container chosen.",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
+
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            DialogResult dialogResult = folderBrowserDialog.ShowDialog();
+
+            if (dialogResult == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+            {
+                ListViewItem listViewItem = new ListViewItem(folderBrowserDialog.SelectedPath);
+                listViewContainerAccessibleFolder.Items.Insert(0, listViewItem);
+            }
+        }
+
+        private void btnContainerDeleteAccessibleFolder_Click(object sender, EventArgs e)
+        {
+            if (listViewContainerAccessibleFolder.SelectedItems.Count == 0)
+                return;
+            listViewContainerAccessibleFolder.Items.RemoveAt(
+                listViewContainerAccessibleFolder.SelectedItems[0].Index
+            );
+        }
+
+        private void btnContainerApply_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void ChangeTabControlContent(ContentIndex contentIndex)
@@ -215,7 +301,6 @@ namespace Sandcess
 
                 listViewItem.SubItems.Add(processList[idx].ProcessName);
                 listViewItem.SubItems.Add(path);
-                listViewItem.SubItems.Add("-");
                 listViewProcessProcess.Items.Add(listViewItem);
                 pathHasTable.Add(path, true);
             }

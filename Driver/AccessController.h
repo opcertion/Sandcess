@@ -5,7 +5,6 @@
 #include <fltKernel.h>
 #include "ProcessUtils.h"
 #include "StringUtils.h"
-#include "FileUtils.h"
 
 
 typedef enum _ACCESS_TYPE
