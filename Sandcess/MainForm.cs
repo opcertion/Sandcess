@@ -96,9 +96,9 @@ namespace Sandcess
             int currentAccessType = 2/* reserved bit */;
 
             foreach (CheckedListBox permissionCheckedBox in new CheckedListBox[]{
-                checkedListBoxFileSystemPermission,
-                checkedListBoxProcessPermission,
-                checkedListBoxNetworkPermission
+                checkedListBoxFileSystemFileSystemPermission,
+                checkedListBoxFileSystemProcessPermission,
+                checkedListBoxFileSystemNetworkPermission
             })
             {
                 for (int idx = 0; idx < permissionCheckedBox.Items.Count; idx++)
@@ -126,19 +126,24 @@ namespace Sandcess
         {
             if (listViewFileSystemFile.SelectedItems.Count == 0)
             {
-                labelTitle.Text = "File System";
+                tabControlFileSystemPermission.SelectedIndex = 0;
+                for (int idx = 0; idx < checkedListBoxFileSystemFileSystemPermission.Items.Count; idx++)
+                    checkedListBoxFileSystemFileSystemPermission.SetItemChecked(idx, false);
+                for (int idx = 0; idx < checkedListBoxFileSystemContainer.Items.Count; idx++)
+                    checkedListBoxFileSystemContainer.SetItemChecked(idx, false);
+                labelMainTitle.Text = "File System";
                 return;
             }
-            labelTitle.Text = listViewFileSystemFile.SelectedItems[0].Text;
+            labelMainTitle.Text = listViewFileSystemFile.SelectedItems[0].Text;
 
             string path = listViewFileSystemFile.SelectedItems[0].SubItems[1].Text;
             uint permission = (AccessController.accessInfo.ContainsKey(path) ? AccessController.accessInfo[path] : 0u);
             int currentAccessType = 2/* reserved bit */;
 
             foreach (CheckedListBox permissionCheckedBox in new CheckedListBox[]{
-                checkedListBoxFileSystemPermission,
-                checkedListBoxProcessPermission,
-                checkedListBoxNetworkPermission
+                checkedListBoxFileSystemFileSystemPermission,
+                checkedListBoxFileSystemProcessPermission,
+                checkedListBoxFileSystemNetworkPermission
             })
             {
                 for (int idx = 0; idx < permissionCheckedBox.Items.Count; idx++)
@@ -146,6 +151,17 @@ namespace Sandcess
                     permissionCheckedBox.SetItemChecked(idx, (((permission >> currentAccessType) & 1) == 1));
                     currentAccessType += 1;
                 }
+            }
+            HashSet<string> targetContainer = new HashSet<string>(ContainerController.GetContainerListByTargetFile(path));
+            int containerIdx = 0;
+
+            foreach (string containerName in ContainerController.containerInfo.Keys)
+            {
+                checkedListBoxFileSystemContainer.SetItemChecked(
+                    containerIdx,
+                    (targetContainer.Contains(containerName))
+                );
+                containerIdx += 1;
             }
         }
 
@@ -166,12 +182,28 @@ namespace Sandcess
 
         private void listViewContainerContainer_SelectedIndexChanged(object sender, EventArgs e)
         {
+            listViewContainerTargetFile.Items.Clear();
+            listViewContainerAccessibleFolder.Items.Clear();
             if (listViewContainerContainer.SelectedItems.Count == 0)
             {
-                labelTitle.Text = "Container";
+                labelMainTitle.Text = "Container";
                 return;
             }
-            labelTitle.Text = listViewContainerContainer.SelectedItems[0].Text;
+            string containerName = listViewContainerContainer.SelectedItems[0].SubItems[0].Text;
+            List<string> targetFileList = ContainerController.containerInfo[containerName].targetFileList;
+            List<string> accessibleFolderList = ContainerController.containerInfo[containerName].accessibleFolderList;
+            labelMainTitle.Text = containerName;
+
+            for (int idx = 0; idx < targetFileList.Count; idx++)
+            {
+                ListViewItem listViewItem = new ListViewItem(targetFileList[idx]);
+                listViewContainerTargetFile.Items.Insert(0, listViewItem);
+            }
+            for (int idx = 0; idx < accessibleFolderList.Count; idx++)
+            {
+                ListViewItem listViewItem = new ListViewItem(accessibleFolderList[idx]);
+                listViewContainerAccessibleFolder.Items.Insert(0, listViewItem);
+            }
         }
 
         private void btnContainerAddContainer_Click(object sender, EventArgs e)
@@ -188,7 +220,7 @@ namespace Sandcess
                 if (ContainerController.containerInfo.ContainsKey(containerName))
                 {
                     MessageBox.Show(
-                        "Container name already exists.",
+                        "Container already exists.",
                         "Error",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
@@ -205,8 +237,64 @@ namespace Sandcess
         {
             if (listViewContainerContainer.SelectedItems.Count == 0)
                 return;
+            ContainerController.containerInfo.Remove(
+                listViewContainerContainer.SelectedItems[0].SubItems[0].Text
+            );
             listViewContainerContainer.Items.RemoveAt(
                 listViewContainerContainer.SelectedItems[0].Index
+            );
+        }
+
+        private void btnContainerAddTargetFile_Click(object sender, EventArgs e)
+        {
+            if (listViewContainerContainer.SelectedItems.Count == 0)
+            {
+                MessageBox.Show(
+                    "No container chosen.",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
+
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string path = openFileDialog.FileName;
+                if (string.IsNullOrWhiteSpace(path))
+                    return;
+                List<string> targetFileList = (
+                    ContainerController.containerInfo[
+                        listViewContainerContainer.SelectedItems[0].SubItems[0].Text
+                    ].targetFileList
+                );
+                if (targetFileList.Contains(path))
+                {
+                    MessageBox.Show(
+                        "Target file already exists.",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                    return;
+                }
+                targetFileList.Add(path);
+                ListViewItem listViewItem = new ListViewItem(path);
+                listViewContainerTargetFile.Items.Insert(0, listViewItem);
+            }
+        }
+
+        private void btnContainerDeleteTargetFile_Click(object sender, EventArgs e)
+        {
+            if (listViewContainerTargetFile.SelectedItems.Count == 0)
+                return;
+            ContainerController.containerInfo[
+                listViewContainerContainer.SelectedItems[0].SubItems[0].Text
+            ].targetFileList.Remove(listViewContainerTargetFile.SelectedItems[0].SubItems[0].Text);
+            listViewContainerTargetFile.Items.RemoveAt(
+                listViewContainerTargetFile.SelectedItems[0].Index
             );
         }
 
@@ -224,11 +312,29 @@ namespace Sandcess
             }
 
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            DialogResult dialogResult = folderBrowserDialog.ShowDialog();
 
-            if (dialogResult == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
-                ListViewItem listViewItem = new ListViewItem(folderBrowserDialog.SelectedPath);
+                string path = folderBrowserDialog.SelectedPath;
+                if (string.IsNullOrWhiteSpace(path))
+                    return;
+                List<string> accessibleFolderList = (
+                    ContainerController.containerInfo[
+                        listViewContainerContainer.SelectedItems[0].SubItems[0].Text
+                    ].accessibleFolderList
+                );
+                if (accessibleFolderList.Contains(path))
+                {
+                    MessageBox.Show(
+                        "Accessible folder already exists.",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                    return;
+                }
+                accessibleFolderList.Add(path);
+                ListViewItem listViewItem = new ListViewItem(path);
                 listViewContainerAccessibleFolder.Items.Insert(0, listViewItem);
             }
         }
@@ -237,6 +343,9 @@ namespace Sandcess
         {
             if (listViewContainerAccessibleFolder.SelectedItems.Count == 0)
                 return;
+            ContainerController.containerInfo[
+                listViewContainerContainer.SelectedItems[0].SubItems[0].Text
+            ].accessibleFolderList.Remove(listViewContainerAccessibleFolder.SelectedItems[0].SubItems[0].Text);
             listViewContainerAccessibleFolder.Items.RemoveAt(
                 listViewContainerAccessibleFolder.SelectedItems[0].Index
             );
@@ -265,22 +374,35 @@ namespace Sandcess
                     {
                         case ContentIndex.FileSystem:
                             title = "File System";
+                            InitializeFileSystemTab();
                             break;
                         case ContentIndex.Process:
                             title = "Process";
+                            InitializeProcessTab();
                             break;
                         case ContentIndex.Container:
                             title = "Container";
+                            InitializeContainerTab();
                             break;
                         case ContentIndex.EventLog:
                             title = "Event Log";
                             break;
                     }
-                    labelTitle.Text = title;
+                    labelMainTitle.Text = title;
                 }
             }
-            if (contentIndex == ContentIndex.Process)
-                InitializeProcessTab();
+        }
+
+        private void InitializeFileSystemTab()
+        {
+            tabControlFileSystemPermission.SelectedIndex = 0;
+            listViewFileSystemFile.SelectedItems.Clear();
+            checkedListBoxFileSystemContainer.Items.Clear();
+
+            for (int idx = 0; idx < checkedListBoxFileSystemFileSystemPermission.Items.Count; idx++)
+                checkedListBoxFileSystemFileSystemPermission.SetItemChecked(idx, false);
+            foreach (string containerName in ContainerController.containerInfo.Keys)
+                checkedListBoxFileSystemContainer.Items.Add(containerName);
         }
 
         private void InitializeProcessTab()
@@ -304,6 +426,11 @@ namespace Sandcess
                 listViewProcessProcess.Items.Add(listViewItem);
                 pathHasTable.Add(path, true);
             }
+        }
+
+        private void InitializeContainerTab()
+        {
+            listViewContainerContainer.SelectedItems.Clear();
         }
     }
 }
