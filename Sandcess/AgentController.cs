@@ -13,21 +13,25 @@ namespace Sandcess
 		public AgentController() { }
 
 
-		public static string SendDataToDriver(string data)
+		public static int SetPermission(string path, uint permission)
 		{
-			try
+			path = FileUtils.DosPathToNtPath(path);
+            permission |= 0xc0000003;
+            try
 			{
-				Process process = new Process();
-				process.StartInfo.UseShellExecute = false;
-				process.StartInfo.RedirectStandardOutput = true;
-				process.StartInfo.FileName = "C:\\Sandcess\\Agent\\Agent.exe";
-				process.StartInfo.Arguments = "--send \"" + data + "\"";
-				process.Start();
-
-				return process.StandardOutput.ReadToEnd();
+				ProcessStartInfo processStartInfo = new ProcessStartInfo("C:\\Sandcess\\Agent\\Agent.exe");
+				processStartInfo.UseShellExecute = false;
+				processStartInfo.ArgumentList.Add("--SetPermission");
+				processStartInfo.ArgumentList.Add(path);
+				processStartInfo.ArgumentList.Add(
+                    (Convert.ToChar((ushort)(permission >> 16)).ToString() + Convert.ToChar((ushort)(permission & 0xffff)).ToString())
+                );
+				Process process = Process.Start(processStartInfo);
+				process.WaitForExit();
+				return process.ExitCode;
 			}
 			catch { }
-			return "";
+			return -1;
 		}
 
 
@@ -35,11 +39,11 @@ namespace Sandcess
 		{
             try
             {
-                Process process = new Process();
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.FileName = "C:\\Sandcess\\Agent\\Agent.exe";
-                process.StartInfo.Arguments = "--showDefaultToast \"" + content + "\"";
-                process.Start();
+                ProcessStartInfo processStartInfo = new ProcessStartInfo("C:\\Sandcess\\Agent\\Agent.exe");
+                processStartInfo.UseShellExecute = false;
+                processStartInfo.ArgumentList.Add("--ShowDefaultToast");
+                processStartInfo.ArgumentList.Add(content);
+				Process.Start(processStartInfo);
             }
             catch { }
         }

@@ -86,6 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AccessController.cpp" />
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="CommunicationController.cpp" />
     <ClCompile Include="EnvController.cpp" />
@@ -93,6 +94,7 @@
     <ClCompile Include="wintoastlib.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AccessController.h" />
     <ClInclude Include="CommunicationController.h" />
     <ClInclude Include="EnvController.h" />
     <ClInclude Include="ToastController.h" />

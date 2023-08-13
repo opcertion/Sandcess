@@ -30,8 +30,8 @@ namespace Sandcess
 
         public static string DosPathToNtPath(string path)
         {
-            StringBuilder sb = new StringBuilder(512);
-            QueryDosDevice(Path.GetPathRoot(path).Replace("\\", ""), sb, 512);
+            StringBuilder sb = new StringBuilder(1024);
+            QueryDosDevice(Path.GetPathRoot(path).Replace("\\", ""), sb, 1024);
             return string.Concat(sb.ToString(), path.AsSpan(2));
         }
     }

@@ -51,14 +51,7 @@ namespace Sandcess
 
         public static bool SetPermission(string path, uint permission)
         {
-            permission |= 0xc0000003;
-            string reqData = (
-                "SetPermission " +
-                FileUtils.DosPathToNtPath(path) + " " +
-                Convert.ToChar((ushort)(permission >> 16)) +
-                Convert.ToChar((ushort)(permission & 0xffff))
-            );
-            bool ret = (AgentController.SendDataToDriver(reqData) == "0");
+            bool ret = (AgentController.SetPermission(path, permission) == 0);
             if (ret)
                 accessInfo[path] = permission;
             return ret;

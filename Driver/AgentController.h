@@ -7,7 +7,8 @@
 
 VOID
 AgentControllerShowAccessBlockedToast(
-	_In_ PWCHAR content
+	_In_ PWCHAR			path,
+	_In_ ACCESS_TYPE	access_type
 );
 
 

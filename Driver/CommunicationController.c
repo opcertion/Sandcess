@@ -59,35 +59,31 @@ MinifltPortCommunicationRoutine(
 	{
 		req = (PUSER_TO_FLT)input_buffer;
 
-		if (WideStringStartswith(req->buffer, L"SetPermission"))
+		if (req->type == SET_PERMISSION)
 		{
-			SIZE_T req_buffer_length = wcsnlen(req->buffer, MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR));
-			if (req_buffer_length <= 18)
+			if (wcsnlen(req->buffer2, MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR)) != 2)
 				goto CLEANUP;
-			
+
+			SIZE_T req_buffer1_length = wcsnlen(req->buffer1, MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR));
 			UNICODE_STRING path; RtlZeroMemory(&path, sizeof(path));
 			UINT32 permission = 0u;
 
-			path.Buffer = WideStringSubstr(req->buffer, 14, req_buffer_length - 3);
-			if (path.Buffer == NULL)
-				goto CLEANUP;
-
-			path.Length = (USHORT)(req_buffer_length - 17) * sizeof(WCHAR);
+			path.Buffer = req->buffer1;
+			path.Length = (USHORT)req_buffer1_length * sizeof(WCHAR);
 			path.MaximumLength = path.Length;
 			permission = (UINT32)(
-				(UINT32)((req->buffer[req_buffer_length - 2]) << 16) |
-				(UINT32)(req->buffer[req_buffer_length - 1])
+				(UINT32)((req->buffer2[0]) << 16) |
+				(UINT32)(req->buffer2[1])
 			);
 			AccessControllerSetPermissionByPath(path, permission);
-			RtlFreeUnicodeString(&path);
 		}
 	}
 
 	if (output_buffer != NULL && output_buffer_size == sizeof(FLT_TO_USER))
 	{
 		resp = (PFLT_TO_USER)output_buffer;
-		wcscpy(resp->buffer, L"0");
-		*return_output_buffer_size = sizeof(resp->buffer);
+		resp->type = req->type;
+		*return_output_buffer_size = sizeof(FLT_TO_USER);
 	}
 CLEANUP:
 	return STATUS_SUCCESS;

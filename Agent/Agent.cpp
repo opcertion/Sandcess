@@ -22,32 +22,12 @@ int wmain(const int argc, const wchar_t* argv[])
 		h_result = comm_controller.Connect();
 		if (IS_ERROR(h_result)) return -1;
 
-		ToastController toast_controller;
-		HANDLE port_handle = comm_controller.GetPortHandle();
-
-		while (1)
-		{
-			FLT_TO_USER_WITH_HEADER resp; ZeroMemory(&resp, sizeof(resp));
-			h_result = FilterGetMessage(
-				port_handle,
-				&resp.header,
-				sizeof(resp),
-				nullptr
-			);
-			if (IS_ERROR(h_result)) continue;
-			try
-			{
-				std::wstring message(resp.message.buffer);
-				if (message.rfind(L"ShowAccessBlockedToast ", 0) == 0)
-					toast_controller.ShowAccessBlockedToast(message.substr(23));
-			}
-			catch (...) { }
-		}
+		while (1) { comm_controller.ProcessRequest(); }
 	}
 
 
 	/* setup */
-	if (argc == 2 && lstrcmpiW(argv[1], L"--setup") == 0)
+	if (argc == 2 && lstrcmpiW(argv[1], L"--Setup") == 0)
 	{
 		EnvController env_controller;
 
@@ -61,8 +41,8 @@ int wmain(const int argc, const wchar_t* argv[])
 	}
 
 
-	/* send data */
-	if (argc == 3 && lstrcmpiW(argv[1], L"--send") == 0)
+	/* set permission */
+	if (argc == 4 && lstrcmpiW(argv[1], L"--SetPermission") == 0)
 	{
 		CommunicationController comm_controller;
 
@@ -71,17 +51,18 @@ int wmain(const int argc, const wchar_t* argv[])
 
 		USER_TO_FLT req; ZeroMemory(&req, sizeof(req));
 		FLT_TO_USER resp; ZeroMemory(&resp, sizeof(resp));
-		
-		wcsncpy_s(req.buffer, argv[2], wcsnlen(argv[2], MSG_BUFFER_SIZE / sizeof(WCHAR)));
+
+		req.type = SET_PERMISSION;
+		wcsncpy_s(req.buffer1, argv[2], wcsnlen(argv[2], MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR)));
+		wcsncpy_s(req.buffer2, argv[3], wcsnlen(argv[3], MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR)));
 		resp = comm_controller.Send(&req);
 
-		wprintf(L"%s", resp.buffer);
-		return 0;
+		return ((req.type == resp.type) ? 0 : -1);
 	}
 
 
 	/* show default toast */
-	if (argc == 3 && lstrcmpiW(argv[1], L"--showDefaultToast") == 0)
+	if (argc == 3 && lstrcmpiW(argv[1], L"--ShowDefaultToast") == 0)
 	{
 		ToastController toast_controller;
 		toast_controller.ShowDefaultToast(argv[2]);

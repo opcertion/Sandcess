@@ -4,66 +4,50 @@
 BOOLEAN
 WideStringEqual(
 	_In_ PWCHAR wstr1,
-	_In_ PWCHAR wstr2
+	_In_ PWCHAR wstr2,
+	_In_ SIZE_T max_count
 )
 {
-	SIZE_T wstr1_length = wcslen(wstr1);
-	SIZE_T wstr2_length = wcslen(wstr2);
-	
-	if (wstr1_length != wstr2_length)
-		return FALSE;
+	PWCHAR wstr1_ptr = wstr1;
+	PWCHAR wstr2_ptr = wstr2;
+	SIZE_T ch_cnt = 0;
 
-	for (SIZE_T idx = 0; idx < wstr1_length; idx++)
+	while (*wstr1_ptr == *wstr2_ptr)
 	{
-		if (wstr1[idx] != wstr2[idx])
+		if (*wstr1_ptr == L'\0')
+			return TRUE;
+		wstr1_ptr += 2;
+		wstr2_ptr += 2;
+		ch_cnt += 1;
+		if (ch_cnt > max_count)
 			return FALSE;
 	}
-	return TRUE;
+	return FALSE;
 }
 
 
 BOOLEAN
 WideStringStartswith(
 	_In_ PWCHAR wstr1,
-	_In_ PWCHAR wstr2
+	_In_ PWCHAR wstr2,
+	_In_ SIZE_T max_count
 )
 {
-	SIZE_T wstr1_length = wcslen(wstr1);
-	SIZE_T wstr2_length = wcslen(wstr2);
+	PWCHAR wstr1_ptr = wstr1;
+	PWCHAR wstr2_ptr = wstr2;
+	SIZE_T ch_cnt = 0;
 
-	if (wstr1_length < wstr2_length)
-		return FALSE;
-
-	for (SIZE_T idx = 0; idx < wstr2_length; idx++)
+	while (*wstr1_ptr == *wstr2_ptr)
 	{
-		if (wstr1[idx] != wstr2[idx])
+		if (*wstr1_ptr == L'\0')
+			return TRUE;
+		wstr1_ptr += 2;
+		wstr2_ptr += 2;
+		ch_cnt += 1;
+		if (ch_cnt > max_count)
 			return FALSE;
 	}
-	return TRUE;
-}
-
-
-PWCHAR
-WideStringSubstr(
-	_In_ PWCHAR wstr,
-	_In_ SIZE_T idx1,
-	_In_ SIZE_T idx2
-)
-{
-	SIZE_T wstr_length = wcslen(wstr);
-
-	if ((idx2 >= wstr_length) || (idx1 > idx2))
-		return NULL;
-	
-	PWCHAR ret = (PWCHAR)ExAllocatePool2(POOL_FLAG_NON_PAGED, (idx2 - idx1 + 1) * sizeof(WCHAR), 'SU');
-	if (ret == NULL)
-	{
-		KdPrint(("[Sandcess] -> [StringUtils_WstringSubstr] ExAllocatePool2 return null."));
-		return NULL;
-	}
-	RtlCopyMemory(ret, &wstr[idx1], (idx2 - idx1) * sizeof(WCHAR));
-	ret[idx2] = L'\0';
-	return ret;
+	return (*wstr2_ptr == L'\0');
 }
 
 
