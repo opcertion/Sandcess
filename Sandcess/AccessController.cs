@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Sandcess
 {
     internal class AccessController
     {
-        private const string ACCESS_INFO_SAVE_PATH = @"C:\Sandcess\ACCESS_INFO.DAT";
+        private const string ACCESS_INFO_SAVE_PATH = @"C:\Sandcess\ACCESS_INFO.JSON";
         enum ACCESS_TYPE
         {
             /* File System */
@@ -22,8 +23,7 @@ namespace Sandcess
             SEND_PACKET,
             RECV_PACKET,
         };
-        
-        public static Dictionary<string, uint> accessInfo = new Dictionary<string, uint>();
+        private static Dictionary<string, uint> accessInfo = new Dictionary<string, uint>();
 
         public static bool SetPermission(string path, uint permission)
         {
@@ -33,34 +33,34 @@ namespace Sandcess
             return ret;
         }
 
+        public static uint GetPermission(string path)
+        {
+            return (accessInfo.ContainsKey(path) ? accessInfo[path] : 0xffffffffu);
+        }
+
+        public static List<string> GetPathList()
+        {
+            return new List<string>(accessInfo.Keys);
+        }
+
         public static void SaveAccessInfo()
         {
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
             try
             {
-                using Stream stream = File.Open(ACCESS_INFO_SAVE_PATH, FileMode.Create);
-                binaryFormatter.Serialize(stream, accessInfo);
-                stream.Close();
+                StreamWriter streamWriter = new StreamWriter(ACCESS_INFO_SAVE_PATH);
+                streamWriter.Write(JsonConvert.SerializeObject(accessInfo));
+                streamWriter.Close();
             }
-            catch
-            {
-                MessageBox.Show(
-                    "Failed to save access information.",
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
-            }
+            catch { MessageBoxController.ShowError("Failed to save access information."); }
         }
 
         public static void LoadAccessInfo()
         {
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
             try
             {
-                using Stream stream = File.Open(ACCESS_INFO_SAVE_PATH, FileMode.Open);
-                accessInfo = (Dictionary<string, uint>)binaryFormatter.Deserialize(stream);
-                stream.Close();
+                StreamReader streamReader = new StreamReader(ACCESS_INFO_SAVE_PATH);
+                accessInfo = JsonConvert.DeserializeObject<Dictionary<string, uint>>(streamReader.ReadToEnd());
+                streamReader.Close();
             }
             catch { accessInfo = new Dictionary<string, uint>(); }
         }

@@ -59,7 +59,9 @@ MinifltPortCommunicationRoutine(
 	{
 		req = (PUSER_TO_FLT)input_buffer;
 
-		if (req->type == SET_PERMISSION)
+		switch (req->type)
+		{
+		case SET_PERMISSION:
 		{
 			if (wcsnlen(req->buffer2, MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR)) != 2)
 				goto CLEANUP;
@@ -71,11 +73,36 @@ MinifltPortCommunicationRoutine(
 			path.Buffer = req->buffer1;
 			path.Length = (USHORT)req_buffer1_length * sizeof(WCHAR);
 			path.MaximumLength = path.Length;
-			permission = (UINT32)(
-				(UINT32)((req->buffer2[0]) << 16) |
-				(UINT32)(req->buffer2[1])
-			);
+			permission = (((UINT32)(req->buffer2[0]) << 16) | (UINT32)(req->buffer2[1]));
 			AccessControllerSetPermissionByPath(path, permission);
+			break;
+		}
+		case CREATE_CONTAINER:
+		{
+			break;
+		}
+		case DELETE_CONTAINER:
+		{
+			break;
+		}
+		case ADD_TARGET_PATH:
+		{
+			break;
+		}
+		case DELETE_TARGET_PATH:
+		{
+			break;
+		}
+		case ADD_ACCESSIBLE_PATH:
+		{
+			break;
+		}
+		case DELETE_ACCESSIBLE_PATH:
+		{
+			break;
+		}
+		default:
+			goto CLEANUP;
 		}
 	}
 

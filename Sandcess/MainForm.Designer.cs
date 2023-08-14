@@ -72,7 +72,6 @@
             panelContainerAccessibleFolderControlMenu = new Panel();
             btnContainerDeleteAccessiblePath = new FontAwesome.Sharp.IconButton();
             btnContainerAddAccessiblePathFolder = new FontAwesome.Sharp.IconButton();
-            btnContainerApply = new Button();
             btnContainerAddAccessiblePathFile = new FontAwesome.Sharp.IconButton();
             panelContainerContainer = new Panel();
             listViewContainerContainer = new ListView();
@@ -798,7 +797,6 @@
             // 
             panelContainerAccessibleFolderControlMenu.Controls.Add(btnContainerDeleteAccessiblePath);
             panelContainerAccessibleFolderControlMenu.Controls.Add(btnContainerAddAccessiblePathFolder);
-            panelContainerAccessibleFolderControlMenu.Controls.Add(btnContainerApply);
             panelContainerAccessibleFolderControlMenu.Controls.Add(btnContainerAddAccessiblePathFile);
             panelContainerAccessibleFolderControlMenu.Dock = DockStyle.Bottom;
             panelContainerAccessibleFolderControlMenu.Location = new Point(0, 245);
@@ -849,17 +847,6 @@
             btnContainerAddAccessiblePathFolder.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnContainerAddAccessiblePathFolder.UseVisualStyleBackColor = false;
             btnContainerAddAccessiblePathFolder.Click += btnContainerAddAccessiblePathFolder_Click;
-            // 
-            // btnContainerApply
-            // 
-            btnContainerApply.Dock = DockStyle.Right;
-            btnContainerApply.Location = new Point(515, 0);
-            btnContainerApply.Name = "btnContainerApply";
-            btnContainerApply.Size = new Size(209, 30);
-            btnContainerApply.TabIndex = 7;
-            btnContainerApply.Text = "Apply";
-            btnContainerApply.UseVisualStyleBackColor = true;
-            btnContainerApply.Click += btnContainerApply_Click;
             // 
             // btnContainerAddAccessiblePathFile
             // 
@@ -1066,7 +1053,6 @@
         private ListView listViewContainerAccessiblePath;
         private ColumnHeader columnHeaderContainerAccessiblePathAccessiblePath;
         private Panel panelContainerAccessibleFolderControlMenu;
-        private Button btnContainerApply;
         private FontAwesome.Sharp.IconButton btnContainerAddAccessiblePathFolder;
         private ListView listViewContainerTargetPath;
         private ColumnHeader columnHeaderContainerTargetPathTargetPath;
