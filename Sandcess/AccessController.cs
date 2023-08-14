@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,12 +9,11 @@ namespace Sandcess
 {
     internal class AccessController
     {
+        private const string ACCESS_INFO_SAVE_PATH = @"C:\Sandcess\ACCESS_INFO.DAT";
         enum ACCESS_TYPE
         {
-            __RESERVED1 = 0,
-            __RESERVED2,
             /* File System */
-            READ_FILE,
+            READ_FILE = 2,
             WRITE_FILE,
             MOVE_FILE,
             /* Process */
@@ -21,30 +21,6 @@ namespace Sandcess
             /* Network */
             SEND_PACKET,
             RECV_PACKET,
-            __DUMMY1,
-            __DUMMY2,
-            __DUMMY3,
-            __DUMMY4,
-            __DUMMY5,
-            __DUMMY6,
-            __DUMMY7,
-            __DUMMY8,
-            __DUMMY9,
-            __DUMMY10,
-            __DUMMY11,
-            __DUMMY12,
-            __DUMMY13,
-            __DUMMY14,
-            __DUMMY15,
-            __DUMMY16,
-            __DUMMY17,
-            __DUMMY18,
-            __DUMMY19,
-            __DUMMY20,
-            __DUMMY21,
-            __DUMMY22,
-            __RESERVED3,
-            __RESERVED4
         };
         
         public static Dictionary<string, uint> accessInfo = new Dictionary<string, uint>();
@@ -55,6 +31,38 @@ namespace Sandcess
             if (ret)
                 accessInfo[path] = permission;
             return ret;
+        }
+
+        public static void SaveAccessInfo()
+        {
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+            try
+            {
+                using Stream stream = File.Open(ACCESS_INFO_SAVE_PATH, FileMode.Create);
+                binaryFormatter.Serialize(stream, accessInfo);
+                stream.Close();
+            }
+            catch
+            {
+                MessageBox.Show(
+                    "Failed to save access information.",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+        }
+
+        public static void LoadAccessInfo()
+        {
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+            try
+            {
+                using Stream stream = File.Open(ACCESS_INFO_SAVE_PATH, FileMode.Open);
+                accessInfo = (Dictionary<string, uint>)binaryFormatter.Deserialize(stream);
+                stream.Close();
+            }
+            catch { accessInfo = new Dictionary<string, uint>(); }
         }
     }
 }

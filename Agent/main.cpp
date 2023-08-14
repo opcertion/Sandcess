@@ -2,7 +2,6 @@
 #include "EnvController.h"
 #include "CommunicationController.h"
 #include "ToastController.h"
-#include <iostream>
 
 
 int wmain(const int argc, const wchar_t* argv[])
@@ -20,7 +19,8 @@ int wmain(const int argc, const wchar_t* argv[])
 
 		CommunicationController comm_controller;
 		h_result = comm_controller.Connect();
-		if (IS_ERROR(h_result)) return -1;
+		if (IS_ERROR(h_result))
+			return -1;
 
 		while (1) { comm_controller.ProcessRequest(); }
 	}

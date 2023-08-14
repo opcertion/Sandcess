@@ -87,7 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AccessController.cpp" />
-    <ClCompile Include="Agent.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="CommunicationController.cpp" />
     <ClCompile Include="EnvController.cpp" />
     <ClCompile Include="ToastController.cpp" />
