@@ -49,23 +49,3 @@ WideStringStartswith(
 	}
 	return (*wstr2_ptr == L'\0');
 }
-
-
-#pragma warning( push )
-#pragma warning( disable:6001 )
-VOID
-UnicodeStringNormalize(
-	_Inout_ PUNICODE_STRING str
-)
-{
-	SIZE_T ch_idx = 0;
-	for (SIZE_T idx = 0; idx < str->MaximumLength / sizeof(WCHAR); idx++)
-	{
-		if (str->Buffer[idx] >= 0x20)
-			str->Buffer[ch_idx++] = str->Buffer[idx];
-	}
-	for (SIZE_T idx = ch_idx; idx < str->MaximumLength / sizeof(WCHAR); idx++)
-		str->Buffer[idx] = L'\0';
-	str->Length = (USHORT)ch_idx * sizeof(WCHAR);
-}
-#pragma warning( pop )

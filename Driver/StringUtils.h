@@ -21,10 +21,4 @@ WideStringStartswith(
 );
 
 
-VOID
-UnicodeStringNormalize(
-	_Inout_ PUNICODE_STRING str
-);
-
-
 #endif // !__STRING_UTILS_H__

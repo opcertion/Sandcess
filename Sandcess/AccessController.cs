@@ -35,7 +35,7 @@ namespace Sandcess
 
         public static uint GetPermission(string path)
         {
-            return (accessInfo.ContainsKey(path) ? accessInfo[path] : 0xffffffffu);
+            return (accessInfo.ContainsKey(path) ? accessInfo[path] : (uint)0xffffffff);
         }
 
         public static List<string> GetPathList()

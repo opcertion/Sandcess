@@ -3,11 +3,12 @@
 
 
 #include "CommunicationController.h"
+#include "ProcessUtils.h"
 
 
 VOID
 AgentControllerShowAccessBlockedToast(
-	_In_ PWCHAR			path,
+	_In_ HANDLE			process_id,
 	_In_ ACCESS_TYPE	access_type
 );
 

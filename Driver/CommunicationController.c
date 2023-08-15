@@ -66,15 +66,10 @@ MinifltPortCommunicationRoutine(
 			if (wcsnlen(req->buffer2, MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR)) != 2)
 				goto CLEANUP;
 
-			SIZE_T req_buffer1_length = wcsnlen(req->buffer1, MINIFLT_MSG_BUFFER_SIZE / sizeof(WCHAR));
-			UNICODE_STRING path; RtlZeroMemory(&path, sizeof(path));
-			UINT32 permission = 0u;
-
-			path.Buffer = req->buffer1;
-			path.Length = (USHORT)req_buffer1_length * sizeof(WCHAR);
-			path.MaximumLength = path.Length;
-			permission = (((UINT32)(req->buffer2[0]) << 16) | (UINT32)(req->buffer2[1]));
-			AccessControllerSetPermissionByPath(path, permission);
+			UNICODE_STRING path; RtlInitUnicodeString(&path, req->buffer1);
+			UINT32 permission = (((UINT32)(req->buffer2[0]) << 16) | (UINT32)(req->buffer2[1]));
+			if (!AccessControllerSetPermissionByPath(path, permission))
+				goto CLEANUP;
 			break;
 		}
 		case CREATE_CONTAINER:

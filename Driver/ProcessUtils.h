@@ -6,9 +6,10 @@
 #include "StringUtils.h"
 
 
-UNICODE_STRING
+BOOLEAN
 GetProcessPathFromProcessId(
-	_In_ HANDLE process_id
+	_In_	HANDLE			process_id,
+	_Out_	PUNICODE_STRING	process_path
 );
 
 

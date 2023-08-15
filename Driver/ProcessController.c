@@ -25,12 +25,7 @@ CreateProcessNotifyRoutine(
 	if (!AccessControllerIsAllowAccess(permission, CREATE_PROCESS))
 	{
 		create_info->CreationStatus = STATUS_UNSUCCESSFUL;
-		
-		UNICODE_STRING parent_process_path = GetProcessPathFromProcessId(parent_process_id);
-		if (parent_process_path.Buffer == NULL)
-			return;
-		AgentControllerShowAccessBlockedToast(parent_process_path.Buffer, CREATE_PROCESS);
-		RtlFreeUnicodeString(&parent_process_path);
+		AgentControllerShowAccessBlockedToast(parent_process_id, CREATE_PROCESS);
 	}
 }
 

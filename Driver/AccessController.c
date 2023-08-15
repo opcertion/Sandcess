@@ -35,8 +35,6 @@ AccessControllerSetPermissionByPath(
 	_In_ UINT32			permission
 )
 {
-	UnicodeStringNormalize(&path);
-
 	PACCESS_INFO trace_node = g_access_info;
 	BOOLEAN ret = TRUE;
 
@@ -81,11 +79,9 @@ AccessControllerGetPermissionByPath(
 	_In_ UNICODE_STRING path
 )
 {
-	UnicodeStringNormalize(&path);
-
 	PACCESS_INFO trace_node = g_access_info;
 	trace_node->permission = (UINT32)0xffffffff;
-	UINT32 ret = 0u;
+	UINT32 ret = 0;
 
 	for (USHORT idx = 8; idx < path.Length / sizeof(WCHAR); idx++)
 	{
@@ -149,9 +145,13 @@ AccessControllerSetPermissionByProcessId(
 		goto CLEANUP;
 	}
 	
-	UNICODE_STRING parent_process_path; RtlZeroMemory(&parent_process_path, sizeof(parent_process_path));
-	parent_process_path = GetProcessPathFromProcessId(parent_process_id);
-	if (parent_process_path.Buffer == NULL)
+	WCHAR buffer[1024] = { 0, };
+	UNICODE_STRING parent_process_path;
+	parent_process_path.Buffer = buffer;
+	parent_process_path.Length = 0;
+	parent_process_path.MaximumLength = sizeof(buffer);
+
+	if (!GetProcessPathFromProcessId(parent_process_id, &parent_process_path))
 	{
 		trace_node->permission = permission;
 		goto CLEANUP;
@@ -168,7 +168,7 @@ AccessControllerGetPermissionByProcessId(
 	_In_ HANDLE			process_id
 )
 {
-	UINT32 ret = 0u;
+	UINT32 ret = 0;
 	
 	UINT32 pid = PtrToUint(process_id);
 	PPROCESS_ACCESS_INFO trace_node = g_process_access_info;
@@ -177,15 +177,18 @@ AccessControllerGetPermissionByProcessId(
 		SIZE_T node_idx = (pid % 10) >> 1;
 		if (trace_node->next_nodes[node_idx] == NULL)
 		{
-			UNICODE_STRING process_path; RtlZeroMemory(&process_path, sizeof(process_path));
-			process_path = GetProcessPathFromProcessId(process_id);
-			if (process_path.Buffer == NULL)
+			WCHAR buffer[1024] = { 0, };
+			UNICODE_STRING process_path;
+			process_path.Buffer = buffer;
+			process_path.Length = 0;
+			process_path.MaximumLength = sizeof(buffer);
+
+			if (!GetProcessPathFromProcessId(process_id, &process_path))
 			{
 				ret = (UINT32)0xffffffff;
 				goto CLEANUP;
 			}
 			ret = AccessControllerGetPermissionByPath(process_path);
-			RtlFreeUnicodeString(&process_path);
 			AccessControllerSetPermissionByProcessId(process_id, ret);
 			goto CLEANUP;
 		}

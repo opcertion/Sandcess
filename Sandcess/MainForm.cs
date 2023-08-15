@@ -149,7 +149,7 @@ namespace Sandcess
                 return;
             }
             string path = listViewFileSystemFile.SelectedItems[0].SubItems[1].Text;
-            uint permission = 0u;
+            uint permission = 0;
             int currentAccessType = 2/* reserved bit */;
 
             foreach (CheckedListBox permissionCheckedListBox in new CheckedListBox[]{
