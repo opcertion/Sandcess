@@ -68,32 +68,63 @@ MinifltPortCommunicationRoutine(
 
 			UNICODE_STRING path; RtlInitUnicodeString(&path, req->buffer1);
 			UINT32 permission = (((UINT32)(req->buffer2[0]) << 16) | (UINT32)(req->buffer2[1]));
-			if (!AccessControllerSetPermissionByPath(path, permission))
+			if (!AccessControllerSetPermissionByPath(&path, permission))
 				goto CLEANUP;
 			break;
 		}
 		case CREATE_CONTAINER:
-		{
-			break;
-		}
 		case DELETE_CONTAINER:
-		{
-			break;
-		}
 		case ADD_TARGET_PATH:
-		{
-			break;
-		}
 		case DELETE_TARGET_PATH:
-		{
-			break;
-		}
 		case ADD_ACCESSIBLE_PATH:
-		{
-			break;
-		}
 		case DELETE_ACCESSIBLE_PATH:
 		{
+			UNICODE_STRING buffer1; RtlInitUnicodeString(&buffer1, req->buffer1);
+			ULONG temp_container_id = 0;
+			RtlUnicodeStringToInteger(&buffer1, 10, &temp_container_id);
+			if (temp_container_id > MAXIMUM_CONTAINER_ID)
+				goto CLEANUP;
+			CHAR container_id = (CHAR)temp_container_id;
+			
+			switch (req->type)
+			{
+			case CREATE_CONTAINER:
+			{
+				if (!ContainerControllerCreateContainer(container_id))
+					goto CLEANUP;
+				break;
+			}
+			case DELETE_CONTAINER:
+			{
+				if (!ContainerControllerDeleteContainer(container_id))
+					goto CLEANUP;
+				break;
+			}
+			case ADD_TARGET_PATH:
+			{
+				UNICODE_STRING path; RtlInitUnicodeString(&path, req->buffer2);
+				if (!ContainerControllerAddTargetPath(container_id, &path))
+					goto CLEANUP;
+				break;
+			}
+			case DELETE_TARGET_PATH:
+			{
+				break;
+			}
+			case ADD_ACCESSIBLE_PATH:
+			{
+				UNICODE_STRING path; RtlInitUnicodeString(&path, req->buffer2);
+				if (!ContainerControllerAddAccessiblePath(container_id, &path))
+					goto CLEANUP;
+				break;
+			}
+			case DELETE_ACCESSIBLE_PATH:
+			{
+				break;
+			}
+			default:
+				goto CLEANUP;
+			}
 			break;
 		}
 		default:

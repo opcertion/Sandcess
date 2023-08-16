@@ -40,6 +40,11 @@ DriverEntry(
 	CHECK_ERROR(AcesssControllerInitialize, status, CLEANUP);
 
 
+	// ==================== [ Container Controller ] ====================
+	status = ContainerControllerInitialize();
+	CHECK_ERROR(ContainerControllerInitialize, status, CLEANUP);
+
+
 	// ==================== [ Minifilter Controller ] ====================
 	status = MinifltControllerInitialize(driver_object);
 	CHECK_ERROR(MinifltControllerInitialize, status, CLEANUP);

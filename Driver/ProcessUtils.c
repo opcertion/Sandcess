@@ -56,10 +56,7 @@ GetProcessPathFromProcessId(
 
 	buffer = (PVOID)ExAllocatePool2(POOL_FLAG_NON_PAGED, returned_length, 'PU');
 	if (buffer == NULL)
-	{
-		KdPrint(("[Sandcess] -> [ProcessUtils_GetProcessPathFromProcessId] ExAllocatePool2 return null."));
 		goto CLEANUP;
-	}
 
 	status = ZwQueryInformationProcess(
 		process_handle,

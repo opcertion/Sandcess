@@ -12,145 +12,214 @@ namespace Sandcess
 	internal class ContainerController
 	{
 		private const string CONTAINER_INFO_SAVE_PATH = @"C:\Sandcess\CONTAINER_INFO.JSON";
-        [Serializable]
-        public struct CONTAINER_INFO
-		{
-			private static uint containerCount = 0u;
-			private readonly uint containerId;
-			public List<string> targetPathList;
-			public List<string> accessiblePathList;
+		public const int MAXIMUM_CONTAINER_COUNT = 100;
+		public const int MAXIMUM_CONTAINER_ID = MAXIMUM_CONTAINER_COUNT - 1;
 
-			public CONTAINER_INFO()
+        private readonly struct CONTAINER_PATH_INFO
+		{
+            [JsonProperty] private readonly int containerId;
+            [JsonProperty] private readonly List<string> targetPathList;
+            [JsonProperty] private readonly List<string> accessiblePathList;
+
+			public CONTAINER_PATH_INFO(int containerId)
 			{
-				containerId = containerCount;
-				containerCount += 1;
+				this.containerId = containerId;
 				targetPathList = new List<string>();
 				accessiblePathList = new List<string>();
 			}
 
-			public static uint GetContainerCount() { return containerCount; }
+			public readonly int GetContainerId()
+			{
+				return containerId;
+			}
 
-			public readonly uint GetContainerId() { return containerId; }
+			public readonly List<string> GetTargetPathList()
+			{
+				return targetPathList;
+			}
+
+			public void AddTargetPath(string path)
+			{
+				targetPathList.Add(path);
+			}
+
+			public void RemoveTargetPath(string path)
+			{
+				targetPathList.Remove(path);
+			}
+
+			public readonly List<string> GetAccessiblePathList()
+			{
+				return accessiblePathList;
+			}
+
+			public void AddAccessiblePath(string path)
+			{
+				accessiblePathList.Add(path);
+			}
+
+			public void RemoveAccessiblePath(string path)
+			{
+				accessiblePathList.Remove(path);
+			}
 		}
-		private static Dictionary<string, CONTAINER_INFO> containerInfo = new Dictionary<string, CONTAINER_INFO>();
+        private struct PATH_TO_CONTAINER_INFO
+		{
+            [JsonProperty] private readonly bool[] containerActivateState = new bool[MAXIMUM_CONTAINER_COUNT];
+			public Dictionary<string, CONTAINER_PATH_INFO> info;
 
+			public PATH_TO_CONTAINER_INFO() { info = new Dictionary<string, CONTAINER_PATH_INFO>(); }
+
+			public bool IsContainerActivated(int containerId) { return containerActivateState[containerId]; }
+
+			public int GetAvailableContainerId()
+			{
+				int containerId = 0;
+				for (; containerId < MAXIMUM_CONTAINER_COUNT; containerId++)
+				{
+					if (!containerActivateState[containerId])
+						return containerId;
+				}
+				return -1;
+			}
+
+			public void SetContainerActivateState(int containerId, bool activate)
+			{
+				containerActivateState[containerId] = activate;
+			}
+		}
+		private static PATH_TO_CONTAINER_INFO containerInfo = new PATH_TO_CONTAINER_INFO();
+		
 		public static bool CreateContainer(string container)
 		{
-			if (AgentController.CreateContainer(container) != 0)
+			int containerId = containerInfo.GetAvailableContainerId();
+			if ((containerId == -1) || (AgentController.CreateContainer(containerId) != 0))
 				return false;
-			containerInfo[container] = new CONTAINER_INFO();
+            containerInfo.SetContainerActivateState(containerId, true);
+			containerInfo.info[container] = new CONTAINER_PATH_INFO(containerId);
 			return true;
 		}
 
-        public static bool DeleteContainer(string container)
-        {
-            if (AgentController.DeleteContainer(container) != 0)
-                return false;
-            containerInfo.Remove(container);
-			return true;
-        }
-
-        public static bool AddTargetPath(string container, string path)
+		public static bool DeleteContainer(string container)
 		{
-			if (AgentController.AddTargetPath(container, path) != 0)
+			int containerId = containerInfo.info[container].GetContainerId();
+			if (AgentController.DeleteContainer(containerId) != 0)
 				return false;
-			containerInfo[container].targetPathList.Add(path);
+            containerInfo.SetContainerActivateState(containerId, false);
+			containerInfo.info.Remove(container);
+			return true;
+		}
+
+		public static bool AddTargetPath(string container, string path)
+		{
+			int containerId = containerInfo.info[container].GetContainerId();
+			if (AgentController.AddTargetPath(containerId, path) != 0)
+				return false;
+			containerInfo.info[container].AddTargetPath(path);
 			return true;
 		}
 
 		public static bool DeleteTargetPath(string container, string path)
 		{
-			if (AgentController.DeleteTargetPath(container, path) != 0)
+			int containerId = containerInfo.info[container].GetContainerId();
+			if (AgentController.DeleteTargetPath(containerId, path) != 0)
 				return false;
-			containerInfo[container].targetPathList.Remove(path);
+			containerInfo.info[container].RemoveTargetPath(path);
 			return true;
 		}
 
-        public static bool AddAccessiblePath(string container, string path)
-        {
-			if (AgentController.AddAccessiblePath(container, path) != 0)
-				return false;
-            containerInfo[container].accessiblePathList.Add(path);
-			return true;
-        }
-
-        public static bool DeleteAccessiblePath(string container, string path)
-        {
-			if (AgentController.DeleteAccessiblePath(container, path) != 0)
-				return false;
-            containerInfo[container].accessiblePathList.Remove(path);
-			return true;
-        }
-
-        public static CONTAINER_INFO GetContainerInfo(string container)
+		public static bool AddAccessiblePath(string container, string path)
 		{
-			return (containerInfo.ContainsKey(container) ? containerInfo[container] : new CONTAINER_INFO());
+			int containerId = containerInfo.info[container].GetContainerId();
+			if (AgentController.AddAccessiblePath(containerId, path) != 0)
+				return false;
+			containerInfo.info[container].AddAccessiblePath(path);
+			return true;
+		}
+
+		public static bool DeleteAccessiblePath(string container, string path)
+		{
+			int containerId = containerInfo.info[container].GetContainerId();
+			if (AgentController.DeleteAccessiblePath(containerId, path) != 0)
+				return false;
+			containerInfo.info[container].RemoveAccessiblePath(path);
+			return true;
+		}
+
+		public static List<string> GetTargetPathList(string container)
+		{
+			return (containerInfo.info[container].GetTargetPathList());
+		}
+
+		public static List<string> GetAccessiblePathList(string container)
+		{
+			return (containerInfo.info[container].GetAccessiblePathList());
 		}
 
 		public static bool IsExistsContainer(string container)
 		{
-			return (containerInfo.ContainsKey(container));
+			return (containerInfo.info.ContainsKey(container));
 		}
 
-        public static bool IsExistsTargetPath(string container, string path)
-        {
-            return (containerInfo[container].targetPathList.Contains(path));
-        }
-
-        public static bool IsExistsAccessiblePath(string container, string path)
-        {
-            return (containerInfo[container].accessiblePathList.Contains(path));
-        }
-
-        public static List<string> GetContainerList()
+		public static bool IsExistsTargetPath(string container, string path)
 		{
-			return new List<string>(containerInfo.Keys);
+			return (containerInfo.info[container].GetTargetPathList().Contains(path));
+		}
+
+		public static bool IsExistsAccessiblePath(string container, string path)
+		{
+			return (containerInfo.info[container].GetAccessiblePathList().Contains(path));
+		}
+
+		public static List<string> GetContainerList()
+		{
+			return new List<string>(containerInfo.info.Keys);
 		}
 
 		public static List<string> GetContainerListByTargetPath(string path)
 		{
 			List<string> ret = new List<string>();
 
-			foreach (string containerName in containerInfo.Keys)
+			foreach (string container in containerInfo.info.Keys)
 			{
-				if (containerInfo[containerName].targetPathList.FindIndex(target => path.StartsWith(target)) != -1)
-					ret.Add(containerName);
+				if (containerInfo.info[container].GetTargetPathList().FindIndex(target => path.StartsWith(target)) != -1)
+					ret.Add(container);
 			}
 			return ret;
 		}
 
-        public static List<string> GetContainerListByAccessiblePath(string path)
-        {
-            List<string> ret = new List<string>();
+		public static List<string> GetContainerListByAccessiblePath(string path)
+		{
+			List<string> ret = new List<string>();
 
-            foreach (string containerName in containerInfo.Keys)
-            {
-                if (containerInfo[containerName].accessiblePathList.FindIndex(target => path.StartsWith(target)) != -1)
-                    ret.Add(containerName);
-            }
-            return ret;
-        }
+			foreach (string container in containerInfo.info.Keys)
+			{
+				if (containerInfo.info[container].GetAccessiblePathList().FindIndex(target => path.StartsWith(target)) != -1)
+					ret.Add(container);
+			}
+			return ret;
+		}
 
-        public static void SaveContainerInfo()
+		public static void SaveContainerInfo()
 		{
 			try
 			{
-                StreamWriter streamWriter = new StreamWriter(CONTAINER_INFO_SAVE_PATH);
-                streamWriter.Write(JsonConvert.SerializeObject(containerInfo));
+				StreamWriter streamWriter = new StreamWriter(CONTAINER_INFO_SAVE_PATH);
+				streamWriter.Write(JsonConvert.SerializeObject(containerInfo));
 				streamWriter.Close();
-            }
+			}
 			catch { MessageBoxController.ShowError("Failed to save container information."); }
-        }
+		}
 
-        public static void LoadContainerInfo()
-        {
-            try
+		public static void LoadContainerInfo()
+		{
+			try
 			{
 				StreamReader streamReader = new StreamReader(CONTAINER_INFO_SAVE_PATH);
-				containerInfo = JsonConvert.DeserializeObject<Dictionary<string, CONTAINER_INFO>>(streamReader.ReadToEnd());
+				containerInfo = JsonConvert.DeserializeObject<PATH_TO_CONTAINER_INFO>(streamReader.ReadToEnd());
 				streamReader.Close();
 			}
-			catch { containerInfo = new Dictionary<string, CONTAINER_INFO>(); }
-        }
-    }
+			catch { containerInfo = new PATH_TO_CONTAINER_INFO(); }
+		}
+	}
 }

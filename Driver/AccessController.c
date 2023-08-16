@@ -25,30 +25,29 @@ typedef struct _PROCESS_ACCESS_INFO
 #pragma pack( pop )
 
 
-PACCESS_INFO g_access_info = NULL;
-PPROCESS_ACCESS_INFO g_process_access_info = NULL;
+PACCESS_INFO			g_access_info			= NULL;
+PPROCESS_ACCESS_INFO	g_process_access_info	= NULL;
 
 
 BOOLEAN
 AccessControllerSetPermissionByPath(
-	_In_ UNICODE_STRING path,
-	_In_ UINT32			permission
+	_In_ PUNICODE_STRING	path,
+	_In_ UINT32				permission
 )
 {
 	PACCESS_INFO trace_node = g_access_info;
 	BOOLEAN ret = TRUE;
 
-	for (USHORT idx = 8; idx < path.Length / sizeof(WCHAR); idx++)
+	for (USHORT idx = 8; idx < path->Length / sizeof(WCHAR); idx++)
 	{
-		UCHAR ch1 = (UCHAR)(path.Buffer[idx] >> 8);
-		UCHAR ch2 = (UCHAR)(path.Buffer[idx] & 0x00ff);
+		UCHAR ch1 = (UCHAR)(path->Buffer[idx] >> 8);
+		UCHAR ch2 = (UCHAR)(path->Buffer[idx] & 0x00ff);
 
 		if (trace_node->next_nodes[ch1] == NULL)
 		{
 			trace_node->next_nodes[ch1] = (PACCESS_INFO)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(ACCESS_INFO), 'AC');
 			if (trace_node->next_nodes[ch1] == NULL)
 			{
-				KdPrint(("[Sandcess] -> [AccessController_AccessControllerSetPermissionByPath] ExAllocatePool2 return null."));
 				ret = FALSE;
 				goto CLEANUP;
 			}
@@ -60,7 +59,6 @@ AccessControllerSetPermissionByPath(
 			trace_node->next_nodes[ch2] = (PACCESS_INFO)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(ACCESS_INFO), 'AC');
 			if (trace_node->next_nodes[ch2] == NULL)
 			{
-				KdPrint(("[Sandcess] -> [AccessController_AccessControllerSetPermissionByPath] ExAllocatePool2 return null."));
 				ret = FALSE;
 				goto CLEANUP;
 			}
@@ -76,17 +74,17 @@ CLEANUP:
 
 UINT32
 AccessControllerGetPermissionByPath(
-	_In_ UNICODE_STRING path
+	_In_ PUNICODE_STRING path
 )
 {
 	PACCESS_INFO trace_node = g_access_info;
 	trace_node->permission = (UINT32)0xffffffff;
 	UINT32 ret = 0;
 
-	for (USHORT idx = 8; idx < path.Length / sizeof(WCHAR); idx++)
+	for (USHORT idx = 8; idx < path->Length / sizeof(WCHAR); idx++)
 	{
-		UCHAR ch1 = (UCHAR)(path.Buffer[idx] >> 8);
-		UCHAR ch2 = (UCHAR)(path.Buffer[idx] & 0x00ff);
+		UCHAR ch1 = (UCHAR)(path->Buffer[idx] >> 8);
+		UCHAR ch2 = (UCHAR)(path->Buffer[idx] & 0x00ff);
 
 		if (trace_node->next_nodes[ch1] == NULL)
 		{
@@ -130,7 +128,6 @@ AccessControllerSetPermissionByProcessId(
 			trace_node = (PPROCESS_ACCESS_INFO)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(PROCESS_ACCESS_INFO), 'AC');
 			if (trace_node == NULL)
 			{
-				KdPrint(("[Sandcess] -> [AccessController_AccessControllerSetPermissionByProcessId] ExAllocatePool2 return null."));
 				ret = FALSE;
 				goto CLEANUP;
 			}
@@ -156,7 +153,7 @@ AccessControllerSetPermissionByProcessId(
 		trace_node->permission = permission;
 		goto CLEANUP;
 	}
-	trace_node->permission = (AccessControllerGetPermissionByPath(parent_process_path) & permission);
+	trace_node->permission = (AccessControllerGetPermissionByPath(&parent_process_path) & permission);
 
 CLEANUP:
 	return ret;
@@ -188,7 +185,7 @@ AccessControllerGetPermissionByProcessId(
 				ret = (UINT32)0xffffffff;
 				goto CLEANUP;
 			}
-			ret = AccessControllerGetPermissionByPath(process_path);
+			ret = AccessControllerGetPermissionByPath(&process_path);
 			AccessControllerSetPermissionByProcessId(process_id, ret);
 			goto CLEANUP;
 		}
@@ -246,17 +243,11 @@ AccessControllerInitialize()
 {
 	g_access_info = (PACCESS_INFO)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(ACCESS_INFO), 'AC');
 	if (g_access_info == NULL)
-	{
-		KdPrint(("[Sandcess] -> [AccessController_AccessControllerInitialize] ExAllocatePool2 return null."));
 		return STATUS_UNSUCCESSFUL;
-	}
 
 	g_process_access_info = (PPROCESS_ACCESS_INFO)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(PROCESS_ACCESS_INFO), 'AC');
 	if (g_process_access_info == NULL)
-	{
-		KdPrint(("[Sandcess] -> [AccessController_AccessControllerInitialize] ExAllocatePool2 return null."));
 		return STATUS_UNSUCCESSFUL;
-	}
 	return STATUS_SUCCESS;
 }
 

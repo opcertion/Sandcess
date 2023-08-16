@@ -2,6 +2,8 @@
 #define __PCH_H__
 
 
+#include "AccessController.h"
+#include "ContainerController.h"
 #include "MinifltController.h"
 #include "FileSystemController.h"
 #include "CommunicationController.h"

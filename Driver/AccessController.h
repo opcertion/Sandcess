@@ -23,14 +23,14 @@ typedef enum _ACCESS_TYPE
 
 BOOLEAN
 AccessControllerSetPermissionByPath(
-	_In_ UNICODE_STRING path,
-	_In_ UINT32			permission
+	_In_ PUNICODE_STRING	path,
+	_In_ UINT32				permission
 );
 
 
 UINT32
 AccessControllerGetPermissionByPath(
-	_In_ UNICODE_STRING path
+	_In_ PUNICODE_STRING path
 );
 
 

@@ -112,11 +112,11 @@ namespace Sandcess
             HashSet<string> currentEnabledContainer = new HashSet<string>(ContainerController.GetContainerListByTargetPath(path));
             int containerIdx = 0;
 
-            foreach (string containerName in ContainerController.GetContainerList())
+            foreach (string container in ContainerController.GetContainerList())
             {
                 checkedListBoxFileSystemContainer.SetItemChecked(
                     containerIdx,
-                    (currentEnabledContainer.Contains(containerName))
+                    (currentEnabledContainer.Contains(container))
                 );
                 containerIdx += 1;
             }
@@ -206,11 +206,10 @@ namespace Sandcess
                 labelMainTitle.Text = "Container";
                 return;
             }
-            string containerName = listViewContainerContainer.SelectedItems[0].SubItems[0].Text;
-            ContainerController.CONTAINER_INFO containerInfo = ContainerController.GetContainerInfo(containerName);
-            List<string> targetPathList = containerInfo.targetPathList;
-            List<string> accessiblePathList = containerInfo.accessiblePathList;
-            labelMainTitle.Text = containerName;
+            string container = listViewContainerContainer.SelectedItems[0].SubItems[0].Text;
+            List<string> targetPathList = ContainerController.GetTargetPathList(container);
+            List<string> accessiblePathList = ContainerController.GetAccessiblePathList(container);
+            labelMainTitle.Text = container;
 
             for (int idx = 0; idx < targetPathList.Count; idx++)
             {
@@ -226,26 +225,36 @@ namespace Sandcess
 
         private void btnContainerAddContainer_Click(object sender, EventArgs e)
         {
-            string containerName = Interaction.InputBox(
+            if (listViewContainerContainer.Items.Count >= ContainerController.MAXIMUM_CONTAINER_COUNT)
+            {
+                MessageBoxController.ShowError(
+                    "The number of containers cannot exceed " +
+                    ContainerController.MAXIMUM_CONTAINER_COUNT.ToString() +
+                    "."
+                );
+                return;
+            }
+
+            string container = Interaction.InputBox(
                 "Please enter the container name.",
                 "Container Name",
                 "Container-1",
                 (Screen.PrimaryScreen.Bounds.Width / 2) - 250,
                 (Screen.PrimaryScreen.Bounds.Height / 2) - 100
             );
-            if (!string.IsNullOrWhiteSpace(containerName))
+            if (!string.IsNullOrWhiteSpace(container))
             {
-                if (ContainerController.IsExistsContainer(containerName))
+                if (ContainerController.IsExistsContainer(container))
                 {
                     MessageBoxController.ShowError("Container already exists.");
                     return;
                 }
-                if (!ContainerController.CreateContainer(containerName))
+                if (!ContainerController.CreateContainer(container))
                 {
                     MessageBoxController.ShowError(MessageBoxController.DRIVER_ERROR);
                     return;
                 }
-                ListViewItem listViewItem = new ListViewItem(containerName);
+                ListViewItem listViewItem = new ListViewItem(container);
                 listViewContainerContainer.Items.Add(listViewItem);
             }
         }
@@ -254,8 +263,8 @@ namespace Sandcess
         {
             if (listViewContainerContainer.SelectedItems.Count == 0)
                 return;
-            string containerName = listViewContainerContainer.SelectedItems[0].SubItems[0].Text;
-            if (!ContainerController.DeleteContainer(containerName))
+            string container = listViewContainerContainer.SelectedItems[0].SubItems[0].Text;
+            if (!ContainerController.DeleteContainer(container))
             {
                 MessageBoxController.ShowError(MessageBoxController.DRIVER_ERROR);
                 return;
@@ -302,13 +311,13 @@ namespace Sandcess
                 if (!openFile && !path.EndsWith("\\"))
                     path += "\\";
 
-                string containerName = listViewContainerContainer.SelectedItems[0].SubItems[0].Text;
-                if (ContainerController.IsExistsTargetPath(containerName, path))
+                string container = listViewContainerContainer.SelectedItems[0].SubItems[0].Text;
+                if (ContainerController.IsExistsTargetPath(container, path))
                 {
                     MessageBoxController.ShowError("Target path already exists.");
                     return;
                 }
-                if (!ContainerController.AddTargetPath(containerName, path))
+                if (!ContainerController.AddTargetPath(container, path))
                 {
                     MessageBoxController.ShowError(MessageBoxController.DRIVER_ERROR);
                     return;
@@ -322,9 +331,9 @@ namespace Sandcess
         {
             if (listViewContainerTargetPath.SelectedItems.Count == 0)
                 return;
-            string containerName = listViewContainerContainer.SelectedItems[0].SubItems[0].Text;
+            string container = listViewContainerContainer.SelectedItems[0].SubItems[0].Text;
             string targetPath = listViewContainerTargetPath.SelectedItems[0].SubItems[0].Text;
-            if (!ContainerController.DeleteTargetPath(containerName, targetPath))
+            if (!ContainerController.DeleteTargetPath(container, targetPath))
             {
                 MessageBoxController.ShowError(MessageBoxController.DRIVER_ERROR);
                 return;
@@ -371,13 +380,13 @@ namespace Sandcess
                 if (!openFile && !path.EndsWith("\\"))
                     path += "\\";
 
-                string containerName = listViewContainerContainer.SelectedItems[0].SubItems[0].Text;
-                if (ContainerController.IsExistsAccessiblePath(containerName, path))
+                string container = listViewContainerContainer.SelectedItems[0].SubItems[0].Text;
+                if (ContainerController.IsExistsAccessiblePath(container, path))
                 {
                     MessageBoxController.ShowError("Accessible path already exists.");
                     return;
                 }
-                if (!ContainerController.AddAccessiblePath(containerName, path))
+                if (!ContainerController.AddAccessiblePath(container, path))
                 {
                     MessageBoxController.ShowError(MessageBoxController.DRIVER_ERROR);
                     return;
@@ -391,9 +400,9 @@ namespace Sandcess
         {
             if (listViewContainerAccessiblePath.SelectedItems.Count == 0)
                 return;
-            string containerName = listViewContainerContainer.SelectedItems[0].SubItems[0].Text;
+            string container = listViewContainerContainer.SelectedItems[0].SubItems[0].Text;
             string accessiblePath = listViewContainerAccessiblePath.SelectedItems[0].SubItems[0].Text;
-            if (!ContainerController.DeleteAccessiblePath(containerName, accessiblePath))
+            if (!ContainerController.DeleteAccessiblePath(container, accessiblePath))
             {
                 MessageBoxController.ShowError(MessageBoxController.DRIVER_ERROR);
                 return;
@@ -450,8 +459,8 @@ namespace Sandcess
             checkedListBoxFileSystemContainer.Items.Clear();
 
             ResetPermissionCheckedListBox();
-            foreach (string containerName in ContainerController.GetContainerList())
-                checkedListBoxFileSystemContainer.Items.Add(containerName);
+            foreach (string container in ContainerController.GetContainerList())
+                checkedListBoxFileSystemContainer.Items.Add(container);
             foreach (string filePath in AccessController.GetPathList())
             {
                 ListViewItem listViewItem = new ListViewItem(FileUtils.GetFileName(filePath));
@@ -488,9 +497,9 @@ namespace Sandcess
             listViewContainerContainer.Items.Clear();
             listViewContainerTargetPath.Items.Clear();
             listViewContainerAccessiblePath.Items.Clear();
-            foreach (string containerName in ContainerController.GetContainerList())
+            foreach (string container in ContainerController.GetContainerList())
             {
-                ListViewItem listViewItem = new ListViewItem(containerName);
+                ListViewItem listViewItem = new ListViewItem(container);
                 listViewContainerContainer.Items.Add(listViewItem);
             }
         }

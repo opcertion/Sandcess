@@ -54,57 +54,57 @@ namespace Sandcess
             });
 		}
 
-		public static int CreateContainer(string container)
+		public static int CreateContainer(int containerId)
 		{
             return StartAgentAndWaitForExit(new List<string> {
                 "--CreateContainer",
-                ContainerController.CONTAINER_INFO.GetContainerCount().ToString(),
-                container
+                containerId.ToString(),
+                containerId.ToString()
             });
         }
 
-        public static int DeleteContainer(string container)
+        public static int DeleteContainer(int containerId)
         {
             return StartAgentAndWaitForExit(new List<string> {
                 "--DeleteContainer",
-                ContainerController.GetContainerInfo(container).GetContainerId().ToString(),
-                container
+                containerId.ToString(),
+                containerId.ToString()
             });
         }
 
-        public static int AddTargetPath(string container, string path)
+        public static int AddTargetPath(int containerId, string path)
         {
             return StartAgentAndWaitForExit(new List<string> {
                 "--AddTargetPath",
-                container,
-                path
+                containerId.ToString(),
+                FileUtils.DosPathToNtPath(path)
             });
         }
 
-        public static int DeleteTargetPath(string container, string path)
+        public static int DeleteTargetPath(int containerId, string path)
         {
             return StartAgentAndWaitForExit(new List<string> {
                 "--DeleteTargetPath",
-                container,
-                path
+                containerId.ToString(),
+                FileUtils.DosPathToNtPath(path)
             });
         }
 
-        public static int AddAccessiblePath(string container, string path)
+        public static int AddAccessiblePath(int containerId, string path)
         {
             return StartAgentAndWaitForExit(new List<string> {
                 "--AddAccessiblePath",
-                container,
-                path
+                containerId.ToString(),
+                FileUtils.DosPathToNtPath(path)
             });
         }
 
-        public static int DeleteAccessiblePath(string container, string path)
+        public static int DeleteAccessiblePath(int containerId, string path)
         {
             return StartAgentAndWaitForExit(new List<string> {
                 "--DeleteAccessiblePath",
-                container,
-                path
+                containerId.ToString(),
+                FileUtils.DosPathToNtPath(path)
             });
         }
 
