@@ -81,6 +81,7 @@ MinifltPortCommunicationRoutine(
 		{
 			UNICODE_STRING buffer1; RtlInitUnicodeString(&buffer1, req->buffer1);
 			ULONG temp_container_id = 0;
+
 			RtlUnicodeStringToInteger(&buffer1, 10, &temp_container_id);
 			if (!IS_VALID_CONTAINER_ID(temp_container_id))
 				goto CLEANUP;

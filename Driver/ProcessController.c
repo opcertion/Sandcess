@@ -1,6 +1,14 @@
 #include "ProcessController.h"
 
 
+#define NOTIFY_ROUTINE_BLOCK_ACCESS \
+do \
+{ \
+	create_info->CreationStatus = STATUS_UNSUCCESSFUL; \
+	AgentControllerShowAccessBlockedToast(parent_process_id, CREATE_PROCESS); \
+} while (0);
+
+
 VOID
 CreateProcessNotifyRoutine(
 	_Inout_		PEPROCESS				process,
@@ -15,17 +23,22 @@ CreateProcessNotifyRoutine(
 		AccessControllerRemovePermissionByProcessId(process_id);
 		return;
 	}
-
+	
 	HANDLE parent_process_id = PsGetCurrentProcessId();
 	if (parent_process_id == NULL)
 		return;
+
+	if (!ContainerControllerIsAllowAccessProcessIdToProcessId(parent_process_id, process_id))
+	{
+		NOTIFY_ROUTINE_BLOCK_ACCESS
+	}
+
 	UINT32 permission = AccessControllerGetPermissionByProcessId(parent_process_id);
 
 	/* Create Process */
-	if (!AccessControllerIsAllowAccess(permission, CREATE_PROCESS))
+	if (!IS_ALLOW_ACCESS(permission, CREATE_PROCESS))
 	{
-		create_info->CreationStatus = STATUS_UNSUCCESSFUL;
-		AgentControllerShowAccessBlockedToast(parent_process_id, CREATE_PROCESS);
+		NOTIFY_ROUTINE_BLOCK_ACCESS
 	}
 }
 

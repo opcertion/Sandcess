@@ -264,11 +264,21 @@ namespace Sandcess
             if (listViewContainerContainer.SelectedItems.Count == 0)
                 return;
             string container = listViewContainerContainer.SelectedItems[0].SubItems[0].Text;
+            List<string> targetPathList = ContainerController.GetTargetPathList(container);
+            List<string> accessiblePathList = ContainerController.GetAccessiblePathList(container);
+
             if (!ContainerController.DeleteContainer(container))
             {
                 MessageBoxController.ShowError(MessageBoxController.DRIVER_ERROR);
                 return;
             }
+
+            // for update container id
+            foreach (string path in targetPathList)
+                FileUtils.IsExists(path);
+            foreach (string path in accessiblePathList)
+                FileUtils.IsExists(path);
+
             listViewContainerContainer.Items.RemoveAt(
                 listViewContainerContainer.SelectedItems[0].Index
             );

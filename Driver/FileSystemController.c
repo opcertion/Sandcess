@@ -31,9 +31,8 @@ MinifltCreatePreRoutine(
 	UNREFERENCED_PARAMETER(completion_context);
 
 	FLT_PREOP_CALLBACK_STATUS ret_callback_status = FLT_PREOP_SUCCESS_WITH_CALLBACK;
+	PFLT_FILE_NAME_INFORMATION file_name_info = NULL;
 	NTSTATUS status = STATUS_SUCCESS;
-	PFLT_FILE_NAME_INFORMATION name_info = NULL;
-	UNICODE_STRING process_path; RtlZeroMemory(&process_path, sizeof(process_path));
 
 	if (data->RequestorMode != UserMode || KeGetCurrentIrql() != PASSIVE_LEVEL || !FLT_IS_IRP_OPERATION(data))
 		goto CLEANUP;
@@ -43,7 +42,7 @@ MinifltCreatePreRoutine(
 		data,
 		FLT_FILE_NAME_NORMALIZED |
 		FLT_FILE_NAME_QUERY_DEFAULT,
-		&name_info
+		&file_name_info
 	);
 	if (!NT_SUCCESS(status))
 	{
@@ -51,7 +50,7 @@ MinifltCreatePreRoutine(
 		goto CLEANUP;
 	}
 
-	status = FltParseFileNameInformation(name_info);
+	status = FltParseFileNameInformation(file_name_info);
 	if (!NT_SUCCESS(status))
 	{
 		ret_callback_status = FLT_PREOP_SUCCESS_NO_CALLBACK;
@@ -61,16 +60,20 @@ MinifltCreatePreRoutine(
 	HANDLE process_id = PsGetCurrentProcessId();
 	if (process_id == NULL)
 		goto CLEANUP;
+	
+	if (!ContainerControllerIsAllowAccessProcessIdToPath(process_id, &(file_name_info->Name)))
+	{
+		PRE_ROUTINE_BLOCK_ACCESS
+	}
 
 	UINT32 permission = AccessControllerGetPermissionByProcessId(process_id);
 	if (permission == (UINT32)0xffffffff)
 		goto CLEANUP;
 
-
 	/* Read File */
 	if (
 		(data->Iopb->MajorFunction == IRP_MJ_READ) &&
-		(!AccessControllerIsAllowAccess(permission, READ_FILE))
+		(!IS_ALLOW_ACCESS(permission, READ_FILE))
 	)
 	{
 		PRE_ROUTINE_BLOCK_ACCESS
@@ -79,7 +82,7 @@ MinifltCreatePreRoutine(
 	if (
 		(data->Iopb->MajorFunction == IRP_MJ_CREATE) &&
 		(data->Iopb->Parameters.Create.SecurityContext->DesiredAccess & (FILE_WRITE_DATA | FILE_APPEND_DATA)) &&
-		(!AccessControllerIsAllowAccess(permission, WRITE_FILE))
+		(!IS_ALLOW_ACCESS(permission, WRITE_FILE))
 	)
 	{
 		PRE_ROUTINE_BLOCK_ACCESS
@@ -90,7 +93,7 @@ MinifltCreatePreRoutine(
 			(data->Iopb->MajorFunction == IRP_MJ_CREATE) ||
 			(data->Iopb->MajorFunction == IRP_MJ_SET_INFORMATION)
 		) &&
-		(!AccessControllerIsAllowAccess(permission, MOVE_FILE))
+		(!IS_ALLOW_ACCESS(permission, MOVE_FILE))
 	)
 	{
 		if (data->Iopb->MajorFunction == IRP_MJ_CREATE)
@@ -119,10 +122,8 @@ MinifltCreatePreRoutine(
 
 	
 CLEANUP:
-	if (name_info)
-		FltReleaseFileNameInformation(name_info);
-	if (process_path.Buffer)
-		RtlFreeUnicodeString(&process_path);
+	if (file_name_info)
+		FltReleaseFileNameInformation(file_name_info);
 	return ret_callback_status;
 }
 #pragma warning ( pop )

@@ -7,6 +7,9 @@
 #include "StringUtils.h"
 
 
+#define IS_ALLOW_ACCESS(_permission_, _access_type_) ((_permission_ >> _access_type_) & 1)
+
+
 typedef enum _ACCESS_TYPE
 {
 	/* File System */
@@ -50,13 +53,6 @@ AccessControllerGetPermissionByProcessId(
 VOID
 AccessControllerRemovePermissionByProcessId(
 	_In_ HANDLE			process_id
-);
-
-
-BOOLEAN
-AccessControllerIsAllowAccess(
-	_In_ UINT32			permission,
-	_In_ ACCESS_TYPE	access_type
 );
 
 

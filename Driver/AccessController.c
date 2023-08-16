@@ -228,16 +228,6 @@ AccessControllerRemovePermissionByProcessId(
 }
 
 
-BOOLEAN
-AccessControllerIsAllowAccess(
-	_In_ UINT32			permission,
-	_In_ ACCESS_TYPE	access_type
-)
-{
-	return (BOOLEAN)((permission >> access_type) & 1);
-}
-
-
 NTSTATUS
 AccessControllerInitialize()
 {

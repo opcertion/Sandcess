@@ -234,6 +234,158 @@ CLEANUP:
 
 
 BOOLEAN
+ContainerControllerIsAllowAccessPathToPath(
+	_In_ PUNICODE_STRING target_path,
+	_In_ PUNICODE_STRING accessible_path
+)
+{
+	BOOLEAN ret = TRUE;
+
+	if ((target_path == NULL) || (accessible_path == NULL))
+		goto CLEANUP;
+	
+	BOOLEAN target_path_container_ids[MAXIMUM_CONTAINER_ID + 1] = { 0, };
+	PUNICODE_STRING container_paths[2] = { target_path, accessible_path };
+
+	for (SIZE_T path_idx = 0; path_idx < 2; path_idx++)
+	{
+		PCONTAINER_INFO trace_node = g_container_info;
+
+		for (SIZE_T idx = 8; idx < container_paths[path_idx]->Length / sizeof(WCHAR); idx++)
+		{
+			UCHAR ch1 = (UCHAR)(container_paths[path_idx]->Buffer[idx] >> 8);
+			UCHAR ch2 = (UCHAR)(container_paths[path_idx]->Buffer[idx] & 0x00ff);
+
+			if (trace_node->next_nodes[ch1] == NULL)
+				goto CLEANUP;
+			trace_node = trace_node->next_nodes[ch1];
+
+			if (trace_node->next_nodes[ch2] == NULL)
+				goto CLEANUP;
+			trace_node = trace_node->next_nodes[ch2];
+			
+			if ((trace_node->container_id_list != NULL) && (trace_node->container_id_list->list != NULL))
+			{
+				PCONTAINER_ID_LIST_NODE id_trace_node = trace_node->container_id_list->list;
+				do
+				{
+					if (!IS_CONTAINER_ACTIVATED(id_trace_node->container_id))
+						id_trace_node->container_id = 0;
+					if (path_idx == 0)
+					{
+						if (id_trace_node->container_id > 0)
+						{
+							ret = FALSE;
+							target_path_container_ids[id_trace_node->container_id] = TRUE;
+						}
+					}
+					else
+					{
+						if ((id_trace_node->container_id < 0) && (target_path_container_ids[id_trace_node->container_id * -1]))
+						{
+							ret = TRUE;
+							goto CLEANUP;
+						}
+					}
+					id_trace_node = id_trace_node->next_node;
+				} while (id_trace_node != NULL);
+			}
+		}
+	}
+
+CLEANUP:
+	return ret;
+}
+
+
+BOOLEAN
+ContainerControllerIsAllowAccessPathToProcessId(
+	_In_ PUNICODE_STRING	target_path,
+	_In_ HANDLE				accessible_process_id
+)
+{
+	BOOLEAN ret = TRUE;
+
+	if (target_path == NULL || accessible_process_id == NULL)
+		goto CLEANUP;
+
+	WCHAR buffer[1024] = { 0, };
+	UNICODE_STRING accessible_process_path;
+	accessible_process_path.Buffer = buffer;
+	accessible_process_path.Length = 0;
+	accessible_process_path.MaximumLength = sizeof(buffer);
+
+	if (!GetProcessPathFromProcessId(accessible_process_id, &accessible_process_path))
+		goto CLEANUP;
+	ret = ContainerControllerIsAllowAccessPathToPath(target_path, &accessible_process_path);
+
+CLEANUP:
+	return ret;
+}
+
+
+BOOLEAN
+ContainerControllerIsAllowAccessProcessIdToPath(
+	_In_ HANDLE				target_process_id,
+	_In_ PUNICODE_STRING	accessible_path
+)
+{
+	BOOLEAN ret = TRUE;
+
+	if (target_process_id == NULL || accessible_path == NULL)
+		goto CLEANUP;
+
+	WCHAR buffer[1024] = { 0, };
+	UNICODE_STRING target_process_path;
+	target_process_path.Buffer = buffer;
+	target_process_path.Length = 0;
+	target_process_path.MaximumLength = sizeof(buffer);
+
+	if (!GetProcessPathFromProcessId(target_process_id, &target_process_path))
+		goto CLEANUP;
+	ret = ContainerControllerIsAllowAccessPathToPath(&target_process_path, accessible_path);
+
+CLEANUP:
+	return ret;
+}
+
+
+BOOLEAN
+ContainerControllerIsAllowAccessProcessIdToProcessId(
+	_In_ HANDLE target_process_id,
+	_In_ HANDLE accessible_process_id
+)
+{
+	BOOLEAN ret = TRUE;
+
+	if (target_process_id == NULL || accessible_process_id == NULL)
+		goto CLEANUP;
+
+	WCHAR buffer[1024] = { 0, };
+	UNICODE_STRING target_process_path;
+	target_process_path.Buffer = buffer;
+	target_process_path.Length = 0;
+	target_process_path.MaximumLength = sizeof(buffer);
+
+	if (!GetProcessPathFromProcessId(target_process_id, &target_process_path))
+		goto CLEANUP;
+
+	RtlZeroMemory(&buffer, sizeof(buffer));
+	UNICODE_STRING accessible_process_path;
+	accessible_process_path.Buffer = buffer;
+	accessible_process_path.Length = 0;
+	accessible_process_path.MaximumLength = sizeof(buffer);
+
+	if (!GetProcessPathFromProcessId(accessible_process_id, &accessible_process_path))
+		goto CLEANUP;
+	ret = ContainerControllerIsAllowAccessPathToPath(&target_process_path, &accessible_process_path);
+
+CLEANUP:
+	return ret;
+}
+
+
+BOOLEAN
 ContainerControllerCreateContainer(
 	_In_ CHAR container_id
 )
@@ -274,11 +426,11 @@ CLEANUP:
 BOOLEAN
 ContainerControllerAddTargetPath(
 	_In_ CHAR				container_id,
-	_In_ PUNICODE_STRING	path
+	_In_ PUNICODE_STRING	target_path
 )
 {
 	BOOLEAN ret = FALSE;
-	PCONTAINER_INFO container_info = CreateContainerInfoByPath(path);
+	PCONTAINER_INFO container_info = CreateContainerInfoByPath(target_path);
 
 	if (container_info == NULL)
 		goto CLEANUP;
@@ -292,11 +444,11 @@ CLEANUP:
 BOOLEAN
 ContainerControllerDeleteTargetPath(
 	_In_ CHAR				container_id,
-	_In_ PUNICODE_STRING	path
+	_In_ PUNICODE_STRING	target_path
 )
 {
 	BOOLEAN ret = FALSE;
-	PCONTAINER_INFO container_info = GetContainerInfoByPath(path);
+	PCONTAINER_INFO container_info = GetContainerInfoByPath(target_path);
 
 	if (container_info == NULL)
 		goto CLEANUP;
@@ -310,11 +462,11 @@ CLEANUP:
 BOOLEAN
 ContainerControllerAddAccessiblePath(
 	_In_ CHAR				container_id,
-	_In_ PUNICODE_STRING	path
+	_In_ PUNICODE_STRING	accessible_path
 )
 {
 	BOOLEAN ret = FALSE;
-	PCONTAINER_INFO container_info = CreateContainerInfoByPath(path);
+	PCONTAINER_INFO container_info = CreateContainerInfoByPath(accessible_path);
 
 	if (container_info == NULL)
 		goto CLEANUP;
@@ -328,11 +480,11 @@ CLEANUP:
 BOOLEAN
 ContainerControllerDeleteAccessiblePath(
 	_In_ CHAR				container_id,
-	_In_ PUNICODE_STRING	path
+	_In_ PUNICODE_STRING	accessible_path
 )
 {
 	BOOLEAN ret = FALSE;
-	PCONTAINER_INFO container_info = GetContainerInfoByPath(path);
+	PCONTAINER_INFO container_info = GetContainerInfoByPath(accessible_path);
 
 	if (container_info == NULL)
 		goto CLEANUP;
