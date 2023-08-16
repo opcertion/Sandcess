@@ -82,7 +82,7 @@ MinifltPortCommunicationRoutine(
 			UNICODE_STRING buffer1; RtlInitUnicodeString(&buffer1, req->buffer1);
 			ULONG temp_container_id = 0;
 			RtlUnicodeStringToInteger(&buffer1, 10, &temp_container_id);
-			if (temp_container_id > MAXIMUM_CONTAINER_ID)
+			if (!IS_VALID_CONTAINER_ID(temp_container_id))
 				goto CLEANUP;
 			CHAR container_id = (CHAR)temp_container_id;
 			
@@ -109,6 +109,9 @@ MinifltPortCommunicationRoutine(
 			}
 			case DELETE_TARGET_PATH:
 			{
+				UNICODE_STRING path; RtlInitUnicodeString(&path, req->buffer2);
+				if (!ContainerControllerDeleteTargetPath(container_id, &path))
+					goto CLEANUP;
 				break;
 			}
 			case ADD_ACCESSIBLE_PATH:
@@ -120,6 +123,9 @@ MinifltPortCommunicationRoutine(
 			}
 			case DELETE_ACCESSIBLE_PATH:
 			{
+				UNICODE_STRING path; RtlInitUnicodeString(&path, req->buffer2);
+				if (!ContainerControllerDeleteAccessiblePath(container_id, &path))
+					goto CLEANUP;
 				break;
 			}
 			default:

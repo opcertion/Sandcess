@@ -5,8 +5,9 @@
 #include <ntddk.h>
 
 
-#define MAXIMUM_CONTAINER_COUNT		100
-#define MAXIMUM_CONTAINER_ID		(MAXIMUM_CONTAINER_COUNT - 1)
+#define MAXIMUM_CONTAINER_COUNT					100
+#define MAXIMUM_CONTAINER_ID					MAXIMUM_CONTAINER_COUNT
+#define IS_VALID_CONTAINER_ID(_container_id_)	((_container_id_ >= 1) && (_container_id_ <= MAXIMUM_CONTAINER_ID))
 
 
 BOOLEAN
@@ -29,7 +30,21 @@ ContainerControllerAddTargetPath(
 
 
 BOOLEAN
+ContainerControllerDeleteTargetPath(
+	_In_ CHAR				container_id,
+	_In_ PUNICODE_STRING	path
+);
+
+
+BOOLEAN
 ContainerControllerAddAccessiblePath(
+	_In_ CHAR				container_id,
+	_In_ PUNICODE_STRING	path
+);
+
+
+BOOLEAN
+ContainerControllerDeleteAccessiblePath(
 	_In_ CHAR				container_id,
 	_In_ PUNICODE_STRING	path
 );

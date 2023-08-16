@@ -13,13 +13,13 @@ namespace Sandcess
 	{
 		private const string CONTAINER_INFO_SAVE_PATH = @"C:\Sandcess\CONTAINER_INFO.JSON";
 		public const int MAXIMUM_CONTAINER_COUNT = 100;
-		public const int MAXIMUM_CONTAINER_ID = MAXIMUM_CONTAINER_COUNT - 1;
+		public const int MAXIMUM_CONTAINER_ID = MAXIMUM_CONTAINER_COUNT;
 
-        private readonly struct CONTAINER_PATH_INFO
+		private readonly struct CONTAINER_PATH_INFO
 		{
-            [JsonProperty] private readonly int containerId;
-            [JsonProperty] private readonly List<string> targetPathList;
-            [JsonProperty] private readonly List<string> accessiblePathList;
+			[JsonProperty] private readonly int containerId;
+			[JsonProperty] private readonly List<string> targetPathList;
+			[JsonProperty] private readonly List<string> accessiblePathList;
 
 			public CONTAINER_PATH_INFO(int containerId)
 			{
@@ -38,12 +38,12 @@ namespace Sandcess
 				return targetPathList;
 			}
 
-			public void AddTargetPath(string path)
+			public readonly void AddTargetPath(string path)
 			{
 				targetPathList.Add(path);
 			}
 
-			public void RemoveTargetPath(string path)
+			public readonly void RemoveTargetPath(string path)
 			{
 				targetPathList.Remove(path);
 			}
@@ -53,29 +53,35 @@ namespace Sandcess
 				return accessiblePathList;
 			}
 
-			public void AddAccessiblePath(string path)
+			public readonly void AddAccessiblePath(string path)
 			{
 				accessiblePathList.Add(path);
 			}
 
-			public void RemoveAccessiblePath(string path)
+			public readonly void RemoveAccessiblePath(string path)
 			{
 				accessiblePathList.Remove(path);
 			}
 		}
-        private struct PATH_TO_CONTAINER_INFO
+		private struct PATH_TO_CONTAINER_INFO
 		{
-            [JsonProperty] private readonly bool[] containerActivateState = new bool[MAXIMUM_CONTAINER_COUNT];
+			[JsonProperty] private readonly bool[] containerActivateState = new bool[MAXIMUM_CONTAINER_ID + 1];
 			public Dictionary<string, CONTAINER_PATH_INFO> info;
 
-			public PATH_TO_CONTAINER_INFO() { info = new Dictionary<string, CONTAINER_PATH_INFO>(); }
-
-			public bool IsContainerActivated(int containerId) { return containerActivateState[containerId]; }
-
-			public int GetAvailableContainerId()
+			public PATH_TO_CONTAINER_INFO()
 			{
-				int containerId = 0;
-				for (; containerId < MAXIMUM_CONTAINER_COUNT; containerId++)
+				info = new Dictionary<string, CONTAINER_PATH_INFO>();
+			}
+
+			public readonly bool IsContainerActivated(int containerId)
+			{
+				return containerActivateState[containerId];
+			}
+
+			public readonly int GetAvailableContainerId()
+			{
+				int containerId = 1;
+				for (; containerId <= MAXIMUM_CONTAINER_ID; containerId++)
 				{
 					if (!containerActivateState[containerId])
 						return containerId;
@@ -83,7 +89,7 @@ namespace Sandcess
 				return -1;
 			}
 
-			public void SetContainerActivateState(int containerId, bool activate)
+			public readonly void SetContainerActivateState(int containerId, bool activate)
 			{
 				containerActivateState[containerId] = activate;
 			}
@@ -95,7 +101,7 @@ namespace Sandcess
 			int containerId = containerInfo.GetAvailableContainerId();
 			if ((containerId == -1) || (AgentController.CreateContainer(containerId) != 0))
 				return false;
-            containerInfo.SetContainerActivateState(containerId, true);
+			containerInfo.SetContainerActivateState(containerId, true);
 			containerInfo.info[container] = new CONTAINER_PATH_INFO(containerId);
 			return true;
 		}
@@ -105,7 +111,7 @@ namespace Sandcess
 			int containerId = containerInfo.info[container].GetContainerId();
 			if (AgentController.DeleteContainer(containerId) != 0)
 				return false;
-            containerInfo.SetContainerActivateState(containerId, false);
+			containerInfo.SetContainerActivateState(containerId, false);
 			containerInfo.info.Remove(container);
 			return true;
 		}

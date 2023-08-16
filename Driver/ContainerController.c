@@ -2,7 +2,7 @@
 
 
 #define CONTAINER_INFO_NEXT_NODES_LENGTH		256
-#define IS_CONTAINER_ACTIVATED(_container_id_)	(g_container_activate_state[_container_id_] == TRUE)
+#define IS_CONTAINER_ACTIVATED(_container_id_)	(g_container_activate_state[_container_id_ * (_container_id_ < 0 ? -1 : 1)])
 
 
 #pragma pack( push, 1 )
@@ -38,8 +38,8 @@ typedef enum _CONTAINER_PATH_TYPE
 } CONTAINER_PATH_TYPE;
 
 
-BOOLEAN			g_container_activate_state[MAXIMUM_CONTAINER_COUNT];
-PCONTAINER_INFO	g_container_info	= NULL;
+BOOLEAN			g_container_activate_state[MAXIMUM_CONTAINER_ID + 1];
+PCONTAINER_INFO	g_container_info = NULL;
 
 
 PCONTAINER_INFO
@@ -69,7 +69,7 @@ GetContainerInfoByPath(
 	ret = trace_node;
 
 CLEANUP:
-	goto CLEANUP;
+	return ret;
 }
 
 
@@ -120,10 +120,11 @@ CLEANUP:
 }
 
 
-BOOLEAN InsertContainerId(
+BOOLEAN
+InsertContainerId(
 	_Inout_	PCONTAINER_INFO		container_info,
 	_In_	CHAR				container_id,
-	_In_	CONTAINER_PATH_TYPE	path_type
+	_In_	CONTAINER_PATH_TYPE	container_path_type
 )
 {
 	BOOLEAN ret = FALSE;
@@ -133,7 +134,7 @@ BOOLEAN InsertContainerId(
 
 	if (container_id < 0)
 		container_id *= -1;
-	if (path_type == ACCESSIBLE_PATH)
+	if (container_path_type == ACCESSIBLE_PATH)
 		container_id *= -1;
 
 	if (container_info->container_id_list == NULL)
@@ -164,6 +165,14 @@ BOOLEAN InsertContainerId(
 	PCONTAINER_ID_LIST_NODE trace_node = container_info->container_id_list->list;
 	while (trace_node->next_node != NULL)
 	{
+		if (!IS_CONTAINER_ACTIVATED(trace_node->container_id))
+			trace_node->container_id = 0;
+		if (trace_node->container_id == 0)
+		{
+			trace_node->container_id = container_id;
+			ret = TRUE;
+			goto CLEANUP;
+		}
 		if (trace_node->container_id == container_id)
 		{
 			ret = TRUE;
@@ -189,17 +198,55 @@ CLEANUP:
 
 
 BOOLEAN
+DeleteContainerId(
+	_Inout_	PCONTAINER_INFO		container_info,
+	_In_	CHAR				container_id,
+	_In_	CONTAINER_PATH_TYPE	container_path_type
+)
+{
+	BOOLEAN ret = FALSE;
+	if (
+		(container_info == NULL) ||
+		(container_info->container_id_list == NULL) ||
+		(container_info->container_id_list->list == NULL)
+	)
+	{
+		goto CLEANUP;
+	}
+
+	if (container_id < 0)
+		container_id *= -1;
+	if (container_path_type == ACCESSIBLE_PATH)
+		container_id *= -1;
+
+	PCONTAINER_ID_LIST_NODE trace_node = container_info->container_id_list->list;
+	do
+	{
+		if (trace_node->container_id == container_id)
+			trace_node->container_id = 0;
+		trace_node = trace_node->next_node;
+	} while (trace_node != NULL);
+	ret = TRUE;
+
+CLEANUP:
+	return ret;
+}
+
+
+BOOLEAN
 ContainerControllerCreateContainer(
 	_In_ CHAR container_id
 )
 {
 	BOOLEAN ret = FALSE;
-	if (container_id > MAXIMUM_CONTAINER_ID)
+
+	if (!IS_VALID_CONTAINER_ID(container_id))
 		goto CLEANUP;
-	
+
 	ret = (!IS_CONTAINER_ACTIVATED(container_id));
 	if (ret)
 		g_container_activate_state[container_id] = TRUE;
+
 CLEANUP:
 	return ret;
 }
@@ -211,9 +258,10 @@ ContainerControllerDeleteContainer(
 )
 {
 	BOOLEAN ret = FALSE;
-	if (container_id > MAXIMUM_CONTAINER_ID)
+
+	if (!IS_VALID_CONTAINER_ID(container_id))
 		goto CLEANUP;
-	
+
 	ret = (IS_CONTAINER_ACTIVATED(container_id));
 	if (ret)
 		g_container_activate_state[container_id] = FALSE;
@@ -242,6 +290,24 @@ CLEANUP:
 
 
 BOOLEAN
+ContainerControllerDeleteTargetPath(
+	_In_ CHAR				container_id,
+	_In_ PUNICODE_STRING	path
+)
+{
+	BOOLEAN ret = FALSE;
+	PCONTAINER_INFO container_info = GetContainerInfoByPath(path);
+
+	if (container_info == NULL)
+		goto CLEANUP;
+	ret = DeleteContainerId(container_info, container_id, TARGET_PATH);
+
+CLEANUP:
+	return ret;
+}
+
+
+BOOLEAN
 ContainerControllerAddAccessiblePath(
 	_In_ CHAR				container_id,
 	_In_ PUNICODE_STRING	path
@@ -253,6 +319,24 @@ ContainerControllerAddAccessiblePath(
 	if (container_info == NULL)
 		goto CLEANUP;
 	ret = InsertContainerId(container_info, container_id, ACCESSIBLE_PATH);
+
+CLEANUP:
+	return ret;
+}
+
+
+BOOLEAN
+ContainerControllerDeleteAccessiblePath(
+	_In_ CHAR				container_id,
+	_In_ PUNICODE_STRING	path
+)
+{
+	BOOLEAN ret = FALSE;
+	PCONTAINER_INFO container_info = GetContainerInfoByPath(path);
+
+	if (container_info == NULL)
+		goto CLEANUP;
+	ret = DeleteContainerId(container_info, container_id, ACCESSIBLE_PATH);
 
 CLEANUP:
 	return ret;
