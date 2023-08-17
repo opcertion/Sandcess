@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Collections;
 using Microsoft.VisualBasic;
 using System.Windows.Forms;
+using System.Windows.Documents;
 
 namespace Sandcess
 {
@@ -35,7 +36,10 @@ namespace Sandcess
 
 
             if (args.Length == 0)
+            {
+                InitializeDashboardTab();
                 return;
+            }
             if (args[0] == "--set")
             {
                 ChangeTabControlContent(ContentIndex.FileSystem);
@@ -82,7 +86,44 @@ namespace Sandcess
         private void btnMenuEventLog_Click(object sender, EventArgs e) { ChangeTabControlContent(ContentIndex.EventLog); }
 
 
+
+        // dashboard - dashboard
+        private void InitializeDashboardTab()
+        {
+            Northwoods.Go.Diagram pathRelationshipDiagram = diagramControlDashboardPathRelationship.Diagram;
+
+            pathRelationshipDiagram.AllowInsert = false;
+            pathRelationshipDiagram.AllowDelete = false;
+            pathRelationshipDiagram.AllowLink = false;
+            pathRelationshipDiagram.AllowCopy = false;
+            pathRelationshipDiagram.UndoManager.IsEnabled = true;
+            pathRelationshipDiagram.Layout = new Northwoods.Go.Layouts.ForceDirectedLayout();
+
+            pathRelationshipDiagram.NodeTemplate = DiagramController.GetPathRelationshipNodeTemplate();
+            pathRelationshipDiagram.LinkTemplate = DiagramController.GetPathRelationshipLinkTemplate();
+            pathRelationshipDiagram.Model = DiagramController.GetPathRelationshipModel();
+        }
+
+
+
         // file system - file system
+        private void InitializeFileSystemTab()
+        {
+            tabControlFileSystemPermission.SelectedIndex = 0;
+            listViewFileSystemFile.Items.Clear();
+            checkedListBoxFileSystemContainer.Items.Clear();
+
+            ResetPermissionCheckedListBox();
+            foreach (string container in ContainerController.GetContainerList())
+                checkedListBoxFileSystemContainer.Items.Add(container);
+            foreach (string filePath in AccessController.GetPathList())
+            {
+                ListViewItem listViewItem = new ListViewItem(FileUtils.GetFileName(filePath));
+                listViewItem.SubItems.Add(filePath);
+                listViewFileSystemFile.Items.Add(listViewItem);
+            }
+        }
+
         private void listViewFileSystemFile_SelectedIndexChanged(object sender, EventArgs e)
         {
             ResetPermissionCheckedListBox();
@@ -177,6 +218,29 @@ namespace Sandcess
 
 
         // process - process
+        private void InitializeProcessTab()
+        {
+            Process[] processList = Process.GetProcesses();
+            Hashtable pathHashTable = new Hashtable();
+
+            listViewProcessProcess.Items.Clear();
+            for (int idx = 0; idx < processList.Length; idx++)
+            {
+                ListViewItem listViewItem = new ListViewItem(processList[idx].Id.ToString());
+
+                string path;
+                try { path = processList[idx].MainModule.FileName; }
+                catch { continue; }
+                if (path == null || pathHashTable.ContainsKey(path))
+                    continue;
+
+                listViewItem.SubItems.Add(processList[idx].ProcessName);
+                listViewItem.SubItems.Add(path);
+                listViewProcessProcess.Items.Add(listViewItem);
+                pathHashTable.Add(path, true);
+            }
+        }
+
         private void listViewProcessProcess_DoubleClick(object sender, EventArgs e)
         {
             if (listViewProcessProcess.SelectedItems.Count == 0)
@@ -197,6 +261,18 @@ namespace Sandcess
 
 
         // container - container
+        private void InitializeContainerTab()
+        {
+            listViewContainerContainer.Items.Clear();
+            listViewContainerTargetPath.Items.Clear();
+            listViewContainerAccessiblePath.Items.Clear();
+            foreach (string container in ContainerController.GetContainerList())
+            {
+                ListViewItem listViewItem = new ListViewItem(container);
+                listViewContainerContainer.Items.Add(listViewItem);
+            }
+        }
+
         private void listViewContainerContainer_SelectedIndexChanged(object sender, EventArgs e)
         {
             listViewContainerTargetPath.Items.Clear();
@@ -456,61 +532,12 @@ namespace Sandcess
                         case ContentIndex.EventLog:
                             title = "Event Log";
                             break;
+                        default:
+                            InitializeDashboardTab();
+                            break;
                     }
                     labelMainTitle.Text = title;
                 }
-            }
-        }
-
-        private void InitializeFileSystemTab()
-        {
-            tabControlFileSystemPermission.SelectedIndex = 0;
-            listViewFileSystemFile.Items.Clear();
-            checkedListBoxFileSystemContainer.Items.Clear();
-
-            ResetPermissionCheckedListBox();
-            foreach (string container in ContainerController.GetContainerList())
-                checkedListBoxFileSystemContainer.Items.Add(container);
-            foreach (string filePath in AccessController.GetPathList())
-            {
-                ListViewItem listViewItem = new ListViewItem(FileUtils.GetFileName(filePath));
-                listViewItem.SubItems.Add(filePath);
-                listViewFileSystemFile.Items.Add(listViewItem);
-            }
-        }
-
-        private void InitializeProcessTab()
-        {
-            Process[] processList = Process.GetProcesses();
-            Hashtable pathHashTable = new Hashtable();
-
-            listViewProcessProcess.Items.Clear();
-            for (int idx = 0; idx < processList.Length; idx++)
-            {
-                ListViewItem listViewItem = new ListViewItem(processList[idx].Id.ToString());
-
-                string path;
-                try { path = processList[idx].MainModule.FileName; }
-                catch { continue; }
-                if (path == null || pathHashTable.ContainsKey(path))
-                    continue;
-
-                listViewItem.SubItems.Add(processList[idx].ProcessName);
-                listViewItem.SubItems.Add(path);
-                listViewProcessProcess.Items.Add(listViewItem);
-                pathHashTable.Add(path, true);
-            }
-        }
-
-        private void InitializeContainerTab()
-        {
-            listViewContainerContainer.Items.Clear();
-            listViewContainerTargetPath.Items.Clear();
-            listViewContainerAccessiblePath.Items.Clear();
-            foreach (string container in ContainerController.GetContainerList())
-            {
-                ListViewItem listViewItem = new ListViewItem(container);
-                listViewContainerContainer.Items.Add(listViewItem);
             }
         }
     }

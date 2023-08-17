@@ -35,6 +35,7 @@
             panelContent = new Panel();
             tabControlMainContent = new TabControl();
             tabPageDashboard = new TabPage();
+            diagramControlDashboardPathRelationship = new Northwoods.Go.WinForms.DiagramControl();
             tabPageFileSystem = new TabPage();
             panelListViewFileSystemFile = new Panel();
             listViewFileSystemFile = new ListView();
@@ -80,12 +81,14 @@
             btnContainerDeleteContainer = new FontAwesome.Sharp.IconButton();
             btnContainerAddContainer = new FontAwesome.Sharp.IconButton();
             tabPageEventLog = new TabPage();
+            iconButton1 = new FontAwesome.Sharp.IconButton();
             panelSideBar.SuspendLayout();
             panelSideMenu.SuspendLayout();
             panelSideMenuHeader.SuspendLayout();
             panelTitleBar.SuspendLayout();
             panelContent.SuspendLayout();
             tabControlMainContent.SuspendLayout();
+            tabPageDashboard.SuspendLayout();
             tabPageFileSystem.SuspendLayout();
             panelListViewFileSystemFile.SuspendLayout();
             panelFileSystemPermissionSetting.SuspendLayout();
@@ -117,6 +120,7 @@
             // 
             // panelSideMenu
             // 
+            panelSideMenu.Controls.Add(iconButton1);
             panelSideMenu.Controls.Add(btnMenuContainer);
             panelSideMenu.Controls.Add(btnMenuProcess);
             panelSideMenu.Controls.Add(btnMenuFileSystem);
@@ -404,6 +408,7 @@
             // 
             // tabPageDashboard
             // 
+            tabPageDashboard.Controls.Add(diagramControlDashboardPathRelationship);
             tabPageDashboard.Location = new Point(4, 24);
             tabPageDashboard.Margin = new Padding(4);
             tabPageDashboard.Name = "tabPageDashboard";
@@ -413,6 +418,17 @@
             tabPageDashboard.TabIndex = 0;
             tabPageDashboard.Text = "Dashboard";
             tabPageDashboard.UseVisualStyleBackColor = true;
+            // 
+            // diagramControlDashboardPathRelationship
+            // 
+            diagramControlDashboardPathRelationship.AllowDrop = true;
+            diagramControlDashboardPathRelationship.BackColor = Color.White;
+            diagramControlDashboardPathRelationship.Dock = DockStyle.Fill;
+            diagramControlDashboardPathRelationship.Location = new Point(4, 4);
+            diagramControlDashboardPathRelationship.Name = "diagramControlDashboardPathRelationship";
+            diagramControlDashboardPathRelationship.Size = new Size(974, 534);
+            diagramControlDashboardPathRelationship.TabIndex = 0;
+            diagramControlDashboardPathRelationship.Text = "diagramControlDashboard";
             // 
             // tabPageFileSystem
             // 
@@ -965,6 +981,30 @@
             tabPageEventLog.Text = "EventLog";
             tabPageEventLog.UseVisualStyleBackColor = true;
             // 
+            // iconButton1
+            // 
+            iconButton1.Dock = DockStyle.Top;
+            iconButton1.FlatAppearance.BorderSize = 0;
+            iconButton1.FlatStyle = FlatStyle.Flat;
+            iconButton1.Font = new Font("Microsoft YaHei", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            iconButton1.ForeColor = Color.White;
+            iconButton1.IconChar = FontAwesome.Sharp.IconChar.Clone;
+            iconButton1.IconColor = Color.White;
+            iconButton1.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            iconButton1.IconSize = 30;
+            iconButton1.ImageAlign = ContentAlignment.MiddleLeft;
+            iconButton1.Location = new Point(0, 236);
+            iconButton1.Margin = new Padding(4);
+            iconButton1.Name = "iconButton1";
+            iconButton1.Padding = new Padding(19, 0, 0, 0);
+            iconButton1.Size = new Size(224, 59);
+            iconButton1.TabIndex = 5;
+            iconButton1.Tag = "";
+            iconButton1.Text = " Container";
+            iconButton1.TextAlign = ContentAlignment.MiddleLeft;
+            iconButton1.TextImageRelation = TextImageRelation.ImageBeforeText;
+            iconButton1.UseVisualStyleBackColor = true;
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
@@ -987,6 +1027,7 @@
             panelTitleBar.PerformLayout();
             panelContent.ResumeLayout(false);
             tabControlMainContent.ResumeLayout(false);
+            tabPageDashboard.ResumeLayout(false);
             tabPageFileSystem.ResumeLayout(false);
             panelListViewFileSystemFile.ResumeLayout(false);
             panelFileSystemPermissionSetting.ResumeLayout(false);
@@ -1071,5 +1112,7 @@
         private Panel panelContainerTargetPath;
         private FontAwesome.Sharp.IconButton btnContainerDeleteTargetPath;
         private FontAwesome.Sharp.IconButton btnContainerDeleteAccessiblePath;
+        private Northwoods.Go.WinForms.DiagramControl diagramControlDashboardPathRelationship;
+        private FontAwesome.Sharp.IconButton iconButton1;
     }
 }
