@@ -9,7 +9,7 @@ namespace Sandcess
 	internal class AccessController
 	{
 		private const string ACCESS_INFO_SAVE_PATH = @"C:\Sandcess\ACCESS_INFO.JSON";
-		enum ACCESS_TYPE
+		public enum ACCESS_TYPE
 		{
 			/* File System */
 			READ_FILE = 2,
@@ -59,7 +59,12 @@ namespace Sandcess
 			return (pathToAccessInfo.info.ContainsKey(path) ? pathToAccessInfo.info[path].GetPermission() : (uint)0xffffffff);
 		}
 
-		public static List<string> GetPathList()
+		public static bool IsAllowPermission(uint permission, ACCESS_TYPE accessType)
+		{
+			return (((permission >> (int)accessType) & 1) == 1);
+        }
+
+        public static List<string> GetPathList()
 		{
 			return new List<string>(pathToAccessInfo.info.Keys);
 		}

@@ -6,9 +6,9 @@ HRESULT EnvController::AddRightClickMenuRegistry()
 	HKEY h_key = NULL;
 	HRESULT h_result = ERROR_SUCCESS;
 	const WCHAR right_click_menu_text[] = L"Sandcess Permission Settings";
-	const WCHAR right_click_menu_command[] = L"C:\\Sandcess\\Sandcess.exe \"--set\" \"%1\"";
+	const WCHAR right_click_menu_command[] = L"C:\\Sandcess\\Sandcess.exe \"--SetPermission\" \"%1\"";
 
-	for (const std::string &reg_path : {"*\\shell\\", "Directory\\shell\\", "Directory\\Background\\shell\\"})
+	for (const std::string &reg_path : {"*\\shell\\"})
 	{
 		h_result = RegCreateKeyExA(
 			HKEY_CLASSES_ROOT,

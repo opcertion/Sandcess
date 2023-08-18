@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<PackageReference Include="Cake.Powershell" Version="3.0.0" />
 	<PackageReference Include="FontAwesome.Sharp" Version="6.3.0" />
 	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	<PackageReference Include="Northwoods.GoDiagram.WinForms" Version="10.0.5" />
