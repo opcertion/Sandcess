@@ -21,9 +21,10 @@ namespace Sandcess
 			return path.EndsWith("\\");
 		}
 
-		public static string GetFileName(string path)
+		public static string GetName(string path)
 		{
-			return path.Split("\\").Last();
+			string[] ret = path.Split("\\");
+            return (ret[ret.Length - (path.EndsWith("\\") ? 2 : 1)]);
 		}
 
 		public static string DosPathToNtPath(string path)
@@ -52,18 +53,18 @@ namespace Sandcess
 			return "";
 		}
 
-		public static void OpenFileExplorer(string path)
+		public static void OpenWindowsExplorer(string path)
 		{
 			try
 			{
                 if (!IsExists(path))
 				{
-					MessageBoxController.ShowError("File not found.");
+					MessageBoxController.ShowError("File or Directory not found.");
 					return;
 				}
                 Process.Start("explorer.exe", ("/select, " + "\"" + path + "\""));
 			}
-			catch { MessageBoxController.ShowError("Failed to open file explorer."); }
+			catch { MessageBoxController.ShowError("Failed to open windows explorer."); }
 		}
 	}
 }

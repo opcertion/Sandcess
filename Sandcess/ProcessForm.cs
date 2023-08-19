@@ -15,7 +15,7 @@ namespace Sandcess
 		private void Initialize()
 		{
 			List<Process> processList = new List<Process>(Process.GetProcesses());
-			Hashtable pathHashTable = new Hashtable();
+			HashSet<string> pathHashSet = new HashSet<string>();
 
 			for (int idx = 0; idx < processList.Count; idx++)
 			{
@@ -24,13 +24,13 @@ namespace Sandcess
 				string path;
 				try { path = processList[idx].MainModule.FileName; }
 				catch { continue; }
-				if (path == null || pathHashTable.ContainsKey(path))
+				if (path == null || pathHashSet.Contains(path))
 					continue;
 
 				listViewItem.SubItems.Add(processList[idx].ProcessName);
 				listViewItem.SubItems.Add(path);
 				listViewProcess.Items.Add(listViewItem);
-				pathHashTable.Add(path, true);
+				pathHashSet.Add(path);
 			}
 		}
 
@@ -39,7 +39,7 @@ namespace Sandcess
 			if (listViewProcess.SelectedItems.Count == 0)
 				return;
 			string path = listViewProcess.SelectedItems[0].SubItems[2].Text;
-			FileUtils.OpenFileExplorer(path);
+			FileUtils.OpenWindowsExplorer(path);
 		}
 	}
 }

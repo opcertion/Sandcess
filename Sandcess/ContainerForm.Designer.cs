@@ -199,6 +199,7 @@
             listViewAccessiblePath.TabIndex = 3;
             listViewAccessiblePath.UseCompatibleStateImageBehavior = false;
             listViewAccessiblePath.View = View.Details;
+            listViewAccessiblePath.DoubleClick += listViewAccessiblePath_DoubleClick;
             // 
             // columnHeaderContainerAccessiblePathAccessiblePath
             // 
@@ -273,6 +274,7 @@
             listViewTargetPath.TabIndex = 6;
             listViewTargetPath.UseCompatibleStateImageBehavior = false;
             listViewTargetPath.View = View.Details;
+            listViewTargetPath.DoubleClick += listViewTargetPath_DoubleClick;
             // 
             // columnHeaderContainerTargetPathTargetPath
             // 

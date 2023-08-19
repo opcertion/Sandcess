@@ -14,7 +14,7 @@ namespace Sandcess
 		{
 			InitializeComponent();
 
-			ListViewItem listViewItem = new ListViewItem(FileUtils.GetFileName(path));
+			ListViewItem listViewItem = new ListViewItem(FileUtils.GetName(path));
 			listViewItem.SubItems.Add(path);
 			listViewFile.Items.Add(listViewItem);
 		}
@@ -23,7 +23,7 @@ namespace Sandcess
 		{
 			foreach (string path in AccessController.GetPathList())
 			{
-				ListViewItem listViewItem = new ListViewItem(FileUtils.GetFileName(path));
+				ListViewItem listViewItem = new ListViewItem(FileUtils.GetName(path));
 				listViewItem.SubItems.Add(path);
 				listViewFile.Items.Add(listViewItem);
 			}
