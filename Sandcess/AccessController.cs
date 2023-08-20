@@ -1,8 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Sandcess
 {
@@ -56,7 +52,12 @@ namespace Sandcess
 
 		public static uint GetPermission(string path)
 		{
-			return (pathToAccessInfo.info.ContainsKey(path) ? pathToAccessInfo.info[path].GetPermission() : (uint)0xffffffff);
+			return (HasPermission(path) ? pathToAccessInfo.info[path].GetPermission() : (uint)0xffffffff);
+		}
+
+		public static bool HasPermission(string path)
+		{
+			return pathToAccessInfo.info.ContainsKey(path);
 		}
 
 		public static bool IsAllowPermission(uint permission, ACCESS_TYPE accessType)

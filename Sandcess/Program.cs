@@ -1,3 +1,4 @@
+
 namespace Sandcess
 {
 	internal static class Program

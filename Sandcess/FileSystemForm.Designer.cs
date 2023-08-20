@@ -197,6 +197,7 @@
             listViewFile.UseCompatibleStateImageBehavior = false;
             listViewFile.View = View.Details;
             listViewFile.SelectedIndexChanged += listViewFile_SelectedIndexChanged;
+            listViewFile.DoubleClick += listViewFile_DoubleClick;
             // 
             // columnHeaderFileName
             // 

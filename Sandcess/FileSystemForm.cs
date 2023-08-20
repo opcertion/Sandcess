@@ -14,9 +14,13 @@ namespace Sandcess
 		{
 			InitializeComponent();
 
-			ListViewItem listViewItem = new ListViewItem(FileUtils.GetName(path));
-			listViewItem.SubItems.Add(path);
-			listViewFile.Items.Add(listViewItem);
+			Initialize();
+			if (!AccessController.HasPermission(path))
+			{
+				ListViewItem listViewItem = new ListViewItem(FileUtils.GetName(path));
+				listViewItem.SubItems.Add(path);
+				listViewFile.Items.Add(listViewItem);
+			}
 		}
 
 		private void Initialize()
@@ -34,20 +38,20 @@ namespace Sandcess
 
 		private void listViewFile_SelectedIndexChanged(object sender, EventArgs e)
 		{
-            foreach (CheckedListBox checkedListBox in new CheckedListBox[]{
-                checkedListBoxFilePermission,
-                checkedListBoxProcessPermission,
-                checkedListBoxNetworkPermission
-            })
-            {
-                checkedListBox.SelectedItems.Clear();
-                for (int idx = 0; idx < checkedListBox.Items.Count; idx++)
-                    checkedListBox.SetItemChecked(idx, false);
-            }
-            for (int idx = 0; idx < checkedListBoxContainer.Items.Count; idx++)
-                checkedListBoxContainer.SetItemChecked(idx, false);
+			foreach (CheckedListBox checkedListBox in new CheckedListBox[]{
+				checkedListBoxFilePermission,
+				checkedListBoxProcessPermission,
+				checkedListBoxNetworkPermission
+			})
+			{
+				checkedListBox.SelectedItems.Clear();
+				for (int idx = 0; idx < checkedListBox.Items.Count; idx++)
+					checkedListBox.SetItemChecked(idx, false);
+			}
+			for (int idx = 0; idx < checkedListBoxContainer.Items.Count; idx++)
+				checkedListBoxContainer.SetItemChecked(idx, false);
 
-            if (listViewFile.SelectedItems.Count == 0)
+			if (listViewFile.SelectedItems.Count == 0)
 				return;
 
 			string path = listViewFile.SelectedItems[0].SubItems[1].Text;
@@ -110,6 +114,14 @@ namespace Sandcess
 				return;
 			}
 			AgentController.ShowDefaultToast("Permissions setup is complete.");
+		}
+
+		private void listViewFile_DoubleClick(object sender, EventArgs e)
+		{
+			if (listViewFile.SelectedItems.Count == 0)
+				return;
+			string path = listViewFile.SelectedItems[0].SubItems[1].Text;
+			FileUtils.OpenWindowsExplorer(path);
 		}
 	}
 }

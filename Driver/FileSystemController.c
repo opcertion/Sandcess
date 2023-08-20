@@ -1,12 +1,27 @@
 #include "FileSystemController.h"
 
 
-#define PRE_ROUTINE_BLOCK_ACCESS \
+#define PRE_ROUTINE_IS_READ_OPERATION ( \
+	(data->Iopb->MajorFunction == IRP_MJ_READ) \
+)
+
+#define PRE_ROUTINE_IS_WRITE_OPERATION ( \
+	(data->Iopb->MajorFunction == IRP_MJ_CREATE) && \
+	(data->Iopb->Parameters.Create.SecurityContext->DesiredAccess & (FILE_WRITE_DATA | FILE_APPEND_DATA)) \
+)
+
+#define PRE_ROUTINE_IS_MOVE_OPERATION ( \
+	(data->Iopb->MajorFunction == IRP_MJ_CREATE) || \
+	(data->Iopb->MajorFunction == IRP_MJ_SET_INFORMATION) \
+)
+
+#define PRE_ROUTINE_BLOCK_ACCESS(_access_type_) \
 do \
 { \
 	data->IoStatus.Status = STATUS_UNSUCCESSFUL; \
 	data->IoStatus.Information = 0; \
 	ret_callback_status = FLT_PREOP_COMPLETE; \
+	AgentControllerShowAccessBlockedToast(PsGetCurrentProcessId(), _access_type_); \
 	goto CLEANUP; \
 } while (0);
 
@@ -63,7 +78,14 @@ MinifltCreatePreRoutine(
 	
 	if (!ContainerControllerIsAllowAccessProcessIdToPath(process_id, &(file_name_info->Name)))
 	{
-		PRE_ROUTINE_BLOCK_ACCESS
+		ACCESS_TYPE access_type = READ_FILE;
+
+		if (PRE_ROUTINE_IS_WRITE_OPERATION)
+			access_type = WRITE_FILE;
+		if (PRE_ROUTINE_IS_MOVE_OPERATION)
+			access_type = MOVE_FILE;
+
+		PRE_ROUTINE_BLOCK_ACCESS(access_type);
 	}
 
 	UINT32 permission = AccessControllerGetPermissionByProcessId(process_id);
@@ -71,36 +93,23 @@ MinifltCreatePreRoutine(
 		goto CLEANUP;
 
 	/* Read File */
-	if (
-		(data->Iopb->MajorFunction == IRP_MJ_READ) &&
-		(!IS_ALLOW_ACCESS(permission, READ_FILE))
-	)
+	if ((PRE_ROUTINE_IS_READ_OPERATION) && (!IS_ALLOW_ACCESS(permission, READ_FILE)))
 	{
-		PRE_ROUTINE_BLOCK_ACCESS
+		PRE_ROUTINE_BLOCK_ACCESS(READ_FILE);
 	}
 	/* Write File */
-	if (
-		(data->Iopb->MajorFunction == IRP_MJ_CREATE) &&
-		(data->Iopb->Parameters.Create.SecurityContext->DesiredAccess & (FILE_WRITE_DATA | FILE_APPEND_DATA)) &&
-		(!IS_ALLOW_ACCESS(permission, WRITE_FILE))
-	)
+	if ((PRE_ROUTINE_IS_WRITE_OPERATION) && (!IS_ALLOW_ACCESS(permission, WRITE_FILE)))
 	{
-		PRE_ROUTINE_BLOCK_ACCESS
+		PRE_ROUTINE_BLOCK_ACCESS(WRITE_FILE);
 	}
 	/* Move File */
-	if (
-		(
-			(data->Iopb->MajorFunction == IRP_MJ_CREATE) ||
-			(data->Iopb->MajorFunction == IRP_MJ_SET_INFORMATION)
-		) &&
-		(!IS_ALLOW_ACCESS(permission, MOVE_FILE))
-	)
+	if ((PRE_ROUTINE_IS_MOVE_OPERATION) && (!IS_ALLOW_ACCESS(permission, MOVE_FILE)))
 	{
 		if (data->Iopb->MajorFunction == IRP_MJ_CREATE)
 		{
 			if (data->Iopb->Parameters.Create.Options & FILE_DELETE_ON_CLOSE)
 			{
-				PRE_ROUTINE_BLOCK_ACCESS
+				PRE_ROUTINE_BLOCK_ACCESS(MOVE_FILE);
 			}
 		}
 		else
@@ -113,7 +122,7 @@ MinifltCreatePreRoutine(
 			case FileDispositionInformationEx:
 			case FileRenameInformationBypassAccessCheck:
 			case FileRenameInformationExBypassAccessCheck:
-				PRE_ROUTINE_BLOCK_ACCESS
+				PRE_ROUTINE_BLOCK_ACCESS(MOVE_FILE);
 			default:
 				break;
 			}

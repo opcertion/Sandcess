@@ -4,6 +4,7 @@
 
 #include "MinifltController.h"
 #include "AccessController.h"
+#include "AgentController.h"
 #include "ContainerController.h"
 #include "ProcessUtils.h"
 
