@@ -91,14 +91,12 @@
     <ClCompile Include="CommunicationController.cpp" />
     <ClCompile Include="EnvController.cpp" />
     <ClCompile Include="ToastController.cpp" />
-    <ClCompile Include="wintoastlib.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AccessController.h" />
     <ClInclude Include="CommunicationController.h" />
     <ClInclude Include="EnvController.h" />
     <ClInclude Include="ToastController.h" />
-    <ClInclude Include="wintoastlib.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

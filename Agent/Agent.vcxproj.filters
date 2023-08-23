@@ -24,9 +24,6 @@
     <ClCompile Include="EnvController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="wintoastlib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ToastController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -39,9 +36,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EnvController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="wintoastlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ToastController.h">
